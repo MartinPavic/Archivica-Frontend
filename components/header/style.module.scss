@@ -1,0 +1,70 @@
+@import '../../assets/scss/variable.scss';
+
+.header {
+    background-color: $background-white;
+    padding: 5px 16px;
+    
+    @media (min-width: 600px) {
+        padding: 5px 24px;
+    }
+
+    .icon {
+        display: flex;
+        color: #65676B;
+        font-weight: 600;
+
+        &_action {
+            @media (min-width: 850px) {
+                display: none;
+            }
+        }
+    }
+}
+
+.search {
+    position: relative;
+    border-radius: 25px;
+    background-color: #F0F2F5;
+    margin-left: 0;
+    width: 100%;
+    margin-right: 8px;
+
+    // &:hover {
+    //     background-color: rgba(255, 255, 255, 0.55);
+    // }
+
+    @media (min-width: 600px) {
+        margin-left: 8px;
+        width: auto;
+    }
+}
+
+.searchIconWrapper {
+    padding: 0px 16px;
+    height: 100%;
+    position: absolute;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.inputBase {
+    color: inherit;
+    color: $theme-blue;
+
+    input {
+        padding: 8px 8px 8px 0px;
+        padding-left: calc(1em + 32px);
+        transition: width 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+        width: 100%;
+
+        @media (min-width: 600px) {
+            width: 12ch;
+
+            &:focus {
+                width: 20ch;
+            }
+        }
+    }
+}

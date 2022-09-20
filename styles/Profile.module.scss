@@ -1,0 +1,12 @@
+.profile {
+    width: 100%;
+    max-width: 900px;
+
+    &_content {
+        display: flex;
+
+        &_right {
+            margin-left: 20px;
+        }
+    }
+}
