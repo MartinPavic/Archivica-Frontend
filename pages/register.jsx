@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
+import { useForm } from 'react-hook-form'
 import Image from 'next/image'
 import Link from 'next/link';
 import Button from '@mui/material/Button';
@@ -14,25 +15,11 @@ import style from '../styles/Sign.module.scss';
 import Copyright from '../components/UI/copyright';
 import { register } from '../store/actions/authActions';
 
-import Logo from '../assets/images/logo.png';
 
 const theme = createTheme();
 
 const SignUpContainer = (props) => {
-  const [state, setState] = useState({
-    email: "",
-    password: "",
-    firstName: "",
-    lastName: ""
-  })
-
-  const handleChange = (evt) => {
-    const value = evt.target.value;
-    setState({
-      ...state,
-      [evt.target.name]: value
-    })
-  } 
+  const { register, handleSubmit, watch, formState: { errors } } = useForm()
 
   const onRegister = (registerForm) => {
     props.register(registerForm)
@@ -50,11 +37,11 @@ const SignUpContainer = (props) => {
             alignItems: 'center',
           }}
         >
-          <Image src={Logo} width={100} height={86}/>
+          <Image src="/assets/images/logo.png" height={100} width={150} />
           <Typography component="h1" variant="h5" sx={{ mt: 5 }}>
             Sign up
           </Typography>
-          <Box noValidate sx={{ mt: 3 }}>
+          <form noValidate sx={{ mt: 3 }} onSubmit={handleSubmit(onRegister)}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <TextField
@@ -65,8 +52,14 @@ const SignUpContainer = (props) => {
                   id="firstName"
                   label="First Name"
                   autoFocus
-                  value={state.firstName}
-                  onChange={handleChange}
+                  error={errors.firstName}
+                  helperText={errors.firstName?.message}
+                  {
+                    ...register("firstName", 
+                      {
+                      required: "First name is required", 
+                    })
+                  }
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -77,8 +70,14 @@ const SignUpContainer = (props) => {
                   label="Last Name"
                   name="lastName"
                   autoComplete="family-name"
-                  value={state.lastName}
-                  onChange={handleChange}
+                  error={errors.lastName}
+                  helperText={errors.lastName?.message}
+                  {
+                    ...register("lastName", 
+                      {
+                      required: "Last name is required", 
+                    })
+                  }
                 />
               </Grid>
               <Grid item xs={12}>
@@ -89,8 +88,18 @@ const SignUpContainer = (props) => {
                   label="Email Address"
                   name="email"
                   autoComplete="email"
-                  value={state.email}
-                  onChange={handleChange}
+                  error={errors.email}
+                  helperText={errors.email?.message}
+                  {
+                    ...register("email", 
+                      {
+                      required: "E-mail address is required", 
+                      pattern: {
+                        value: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
+                        message: "Invalid e-mail address"
+                      }
+                    })
+                  }
                 />
               </Grid>
               <Grid item xs={12}>
@@ -101,18 +110,47 @@ const SignUpContainer = (props) => {
                   label="Password"
                   type="password"
                   id="password"
-                  autoComplete="new-password"
-                  value={state.password}
-                  onChange={handleChange}
+                  error= {errors.password}
+                  helperText = {errors.password?.message}
+                  {
+                    ...register("password", {
+                      required: "Password is required", 
+                      pattern: {
+                        value: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/,
+                        message: "Minimum eight characters, at least one uppercase letter, one lowercase letter and one number"
+                      }
+                  })
+                  }
                 />
               </Grid>
+              {/* <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  name="confirmPassword"
+                  label="Confirm assword"
+                  type="confirmPassword"
+                  id="confirmPassword"
+                  error= {errors.confirmPassword}
+                  helperText = {errors.confirmPassword?.message}
+                  {...register("confirm_password", {
+                    required: true,
+                    validate: (val) => {
+                      if (watch('password') != val) {
+                        console.log("test")
+                        return "Your passwords do no match";
+                      }
+                    },
+                   })}
+                />
+              </Grid> */}
             </Grid>
             <Button
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
-              onClick={() => onRegister(state)} 
+              disabled={errors.email || errors.password || errors.email || errors.password}
             >
               Sign Up
             </Button>
@@ -123,7 +161,7 @@ const SignUpContainer = (props) => {
                 </Link>
               </Grid>
             </Grid>
-          </Box>
+          </form>
         </Box>
         <Copyright />
       </Container>

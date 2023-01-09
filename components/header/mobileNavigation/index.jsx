@@ -96,13 +96,13 @@ const MobileNavigation = props => {
                         <ListItemIcon>
                             <PublicIcon />
                         </ListItemIcon>
-                        <ListItemText primary='Countries' />
+                        <ListItemText primary='Places' />
                     </ListItem>
                     <ListItem button>
                         <ListItemIcon>
                             <DateRangeIcon />
                         </ListItemIcon>
-                        <ListItemText primary='Periods' />
+                        <ListItemText primary='Blogs' />
                     </ListItem>
                     {/* <ListItem button>
                         <ListItemIcon>

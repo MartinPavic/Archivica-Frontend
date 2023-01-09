@@ -20,7 +20,7 @@ const Filtering = props => {
     return (
         <div className={style.filtering}>
             {renderSelect}
-            <YearFilter />
+            {/* <YearFilter /> */}
         </div>
     );
 };

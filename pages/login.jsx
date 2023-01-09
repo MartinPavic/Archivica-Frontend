@@ -1,4 +1,8 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
+import { useForm } from 'react-hook-form'
+import { useRouter } from 'next/router';
+
 import Image from 'next/image'
 import Link from 'next/link';
 import Button from '@mui/material/Button';
@@ -14,14 +18,27 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import style from '../styles/Sign.module.scss';
 import Copyright from '../components/UI/copyright';
 
-import Logo from '../assets/images/logo.png';
+import { login } from '../store/actions/authActions';
 
 const theme = createTheme();
 
-const SignIn = () => {
-  const handleSubmit = () => {
-    console.log('event', event);
-  };
+const LoginContainer = (props) => {
+  const router = useRouter()
+  const user = localStorage.getItem('user')
+  const { register, handleSubmit, formState: { errors } } = useForm()
+
+  const onLogin = (loginForm) => {
+    return props.login(loginForm).then(() => {
+      if(true) {
+        const returnUrl = router.query.returnUrl || '/';
+        router.push(returnUrl)
+      }
+    })
+  }
+  // check if user is already logged in
+  if(user) {
+    router.push('/')
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -34,11 +51,11 @@ const SignIn = () => {
             alignItems: 'center',
           }}
         >
-          <Image src={Logo} width={100} height={86}/>
+          <Image src="/assets/images/logo.png" width={150} height={100}/>
           <Typography component="h1" variant="h5" sx={{ mt: 5 }}>
             Sign in
           </Typography>
-          <Box onClick={() => handleSubmit()} noValidate sx={{ mt: 1 }}>
+          <form onSubmit={handleSubmit(onLogin)} noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
@@ -48,6 +65,18 @@ const SignIn = () => {
               name="email"
               autoComplete="email"
               autoFocus
+              error={errors.email}
+              helperText={errors.email?.message}
+              {
+                ...register("email", 
+                  {
+                  required: "E-mail address is required", 
+                  pattern: {
+                    value: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
+                    message: "Invalid e-mail address"
+                  }
+                })
+              }
             />
             <TextField
               margin="normal"
@@ -58,6 +87,11 @@ const SignIn = () => {
               type="password"
               id="password"
               autoComplete="current-password"
+              error= {errors.password}
+              helperText = {errors.password?.message}
+              {
+                ...register("password", {required: "Password is required"})
+              }
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
@@ -68,7 +102,9 @@ const SignIn = () => {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              disabled={errors.email || errors.password}
             >
+
               Sign In
             </Button>
             <Grid container justifyContent="flex-end">
@@ -78,7 +114,7 @@ const SignIn = () => {
                 </Link>
               </Grid>
             </Grid>
-          </Box>
+          </form>
         </Box>
         <Copyright />
       </Container>
@@ -86,4 +122,12 @@ const SignIn = () => {
   );
 }
 
-export default SignIn;
+const mapStateToProps = ({ authState }) => ({
+  authState
+})
+
+const mapDispatchToProps = {
+  login,
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(LoginContainer)

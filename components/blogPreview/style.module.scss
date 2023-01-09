@@ -6,9 +6,9 @@
     box-shadow: 0 4px 4px rgb(0 0 0 / 10%);
     border-radius: 5px;
     margin-bottom: 15px;
-    max-width: 600px;
+    max-width: 90vh;
 
-    @media (max-width: 600px) {
+    @media (max-width: 90vh) {
         flex-direction: column;
     }
 
@@ -39,7 +39,7 @@
     &_image {
         width: 100%;
 
-        @media (max-width: 600px) {
+        @media (max-width: 90vh) {
             display: flex;
             justify-content: center;
             align-items: flex-end;

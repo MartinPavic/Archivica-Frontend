@@ -22,7 +22,7 @@ const SideFilter = () => {
                     <ListItemText primary="Klara Vučković" />
                 </ListItem>
                 <Divider sx={{ margin: '5px 0 15px' }}>
-                    <Chip label="POSTS SEARCH" />
+                    Groups
                 </Divider>
                 <Filtering />
             </List>
