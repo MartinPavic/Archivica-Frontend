@@ -1,0 +1,47 @@
+@import '../../../assets/scss/variable.scss';
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    // padding: 20px 15px;
+    // background: #f9fcfe;
+    // -webkit-box-shadow: 0 4px 4px rgb(0 0 0 / 10%);
+    // box-shadow: 0 4px 4px rgb(0 0 0 / 10%);
+    // border-radius: 5px;
+    @media (max-width: 1440px) {
+        position: fixed;
+        width: 20%;
+        max-width: 300px;
+    }
+
+    ul {
+        padding: 0;
+        position: sticky;
+        top: 156px;
+    }
+
+    li {
+        border-radius: 8px;
+        cursor: pointer;
+
+        @media (max-width: 1170px) {
+            padding: 8px 0;
+        }
+
+        &:hover {
+            background-color: rgba(0, 0, 0, 0.04);
+        }
+    }
+
+
+    &_avatar {
+        display: flex;
+        justify-content: center;
+    }
+
+    // button {
+    //     background-color: $theme-blue;
+    //     margin-bottom: 5px;
+    // }
+}

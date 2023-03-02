@@ -1,0 +1,52 @@
+.blog {
+    display: flex;
+    flex-direction: column;
+    padding: 0 20%;
+
+    @media (max-width: 767px) {
+        padding: 0 3%;
+    }
+
+    a {
+        cursor: pointer;
+        color: #7BC87A;
+        font-size: 18px;
+    }
+
+    p {
+        font-size: 1.125rem;
+        line-height: 1.6;
+        font-weight: 300;
+    }
+
+    &_details {
+        font-size: 14px;
+        color: #676767;
+        margin: 0 0 15px;
+    }
+
+    &_comments {
+        background-color: white;
+        border-radius: 5px;
+        padding: 25px 10px;
+
+        &_data {
+            background-color: rgba(0, 0, 0, 0.05);
+            border-radius: 20px;
+            padding: 8px 12px;
+
+            p {
+                margin: 0;
+                line-height: normal;
+            }
+
+            span {
+                font-weight: 600;
+            }
+        }
+    }
+
+    h2 {
+        margin-bottom: 0;
+    }
+}
