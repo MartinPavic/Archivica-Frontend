@@ -1,4 +1,5 @@
 export interface Post {
+	_id: string;
 	name: string;
     date: Date;
     photoPath: string;

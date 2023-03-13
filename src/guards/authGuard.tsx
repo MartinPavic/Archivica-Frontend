@@ -1,17 +1,35 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/router";
 import useAuth from "../contexts/useAuth";
 
 
-function AuthGuard(props: { children: JSX.Element[] | JSX.Element }): JSX.Element | null {
+const AuthGuard = (props: { children: JSX.Element[] | JSX.Element }): JSX.Element | null => {
     const { children } = props;
     const router = useRouter();
     const [authorized, setAuthorized] = useState(false);
-	const { getCurrentUser } = useAuth();
+	const { user } = useAuth();
+
+	const authCheck = useCallback(async (url: string) => {
+        // redirect to login page if accessing a private page and not logged in
+        const publicPaths = ["/login", "/register"];
+        const path = url.split("?")[0];
+        if (!user && !publicPaths.includes(path)) {
+            setAuthorized(false);
+            router.push({
+                pathname: "/login",
+                query: { returnUrl: router.asPath },
+            });
+        } else if (user && publicPaths.includes(path)) {
+            setAuthorized(true);
+			router.push("/");
+        } else {
+			setAuthorized(true);
+		}
+	}, [user, router])
 	
     useEffect(() => {
         // on initial load - run auth check
-        authCheck(router.asPath);
+		authCheck(router.asPath)
 
         // on route change start - hide page content by setting authorized to false
         const hideContent = () => setAuthorized(false);
@@ -27,23 +45,7 @@ function AuthGuard(props: { children: JSX.Element[] | JSX.Element }): JSX.Elemen
         };
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    async function authCheck(url: string) {
-        // redirect to login page if accessing a private page and not logged in
-        const publicPaths = ["/login", "/register"];
-        const path = url.split("?")[0];
-		const user = await getCurrentUser();
-        if (!user && !publicPaths.includes(path)) {
-            setAuthorized(false);
-            router.push({
-                pathname: "/login",
-                query: { returnUrl: router.asPath },
-            });
-        } else {
-            setAuthorized(true);
-        }
-    }
+    }, [authCheck]);
 
     return authorized ? <>{children}</> : null;
 }

@@ -5,10 +5,11 @@ import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import Avatar from '@mui/material/Avatar';
 import { useRouter } from 'next/router';
+import useAuth from '../../../contexts/useAuth';
 
 const AccountMenu = (props: any) => {
     const [showMenu, setShowMenu] = React.useState(null);
-    const router = useRouter()
+	const { logout } = useAuth();
 
     const handleCloseMenu = () => {
         setShowMenu(null);
@@ -20,9 +21,7 @@ const AccountMenu = (props: any) => {
 
     const handleLogout = (event: any) => {
         setShowMenu(null);
-        props.logout();
-        router.push('/login')
-        // navigate to login screen
+        logout();
     }
 
     return (

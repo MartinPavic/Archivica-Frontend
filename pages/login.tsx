@@ -26,7 +26,6 @@ const theme = createTheme();
 const LoginPage: NextPage = (): JSX.Element => {
     const { signIn, error, loading } = useAuth();
     const [showSnackBar, setShowSnackBar] = useState(false);
-    // const [ rememberMe, setRememberMe ] = useState(false);
     const {
         register,
         handleSubmit,
@@ -34,11 +33,6 @@ const LoginPage: NextPage = (): JSX.Element => {
     } = useForm<UserLogin>();
 
     const onSubmit = async (values: FieldValues) => isValid ? await signIn(values as UserLogin) : null;
-
-    // const handleRememberMe = (ev: React.ChangeEvent<HTMLInputElement>) => {
-    // 	ev.preventDefault();
-    // 	setRememberMe(ev.target.checked);
-    // }
 
     useEffect(() => setShowSnackBar(!!error), [error]);
 

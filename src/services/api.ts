@@ -1,48 +1,60 @@
-import axios from "axios";
+import axios, { AxiosInstance, AxiosResponse, RawAxiosRequestHeaders } from "axios";
 import { AuthData } from "../models/auth";
 import { Filter } from "../models/filter";
 import { Post } from "../models/post";
 import { User, UserLogin, UserRegister } from "../models/user";
 
-const axiosInstance = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_URL,
-    headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-    },
-});
+export interface ApiRequestData<T> {
+	data?: T
+	headers?: RawAxiosRequestHeaders
+}
 
-const authHeader = (accessToken: string) => ({ Authorization: "Bearer " + accessToken })
+class Api {
+	private readonly axiosInstance: AxiosInstance;
 
-export class Api {
-    static async postRegister(userRegister: UserRegister): Promise<User> {
-        const response = await axiosInstance.post<User>("users/register", userRegister);
-        return response.data;
+	constructor() {
+		this.axiosInstance = axios.create({
+			baseURL: process.env.NEXT_PUBLIC_API_URL,
+			headers: {
+				Accept: "application/json",
+				"Content-Type": "application/json",
+				"Access-Control-Allow-Origin": "*",
+			},
+		});
+	}
+
+    postRegister = async (apiRequestData: ApiRequestData<UserRegister>): Promise<AxiosResponse<User>> => {
+        return await this.axiosInstance.post<User>("users/register", apiRequestData.data, { headers: apiRequestData.headers });
     }
 
-    static async postLogin(userLogin: UserLogin): Promise<User & AuthData> {
-        const response = await axiosInstance.post<User & AuthData>("users/login", userLogin);
-        return response.data;
+    postLogin = async (apiRequestData: ApiRequestData<UserLogin>): Promise<AxiosResponse<User & AuthData>> => {
+        return await this.axiosInstance.post<User & AuthData>("users/login", apiRequestData.data, { headers: apiRequestData.headers });
     }
 
-    static async deleteLogout(accessToken: string): Promise<string> {
-        const response = await axiosInstance.delete<string>("users/logout", { headers: authHeader(accessToken) });
-        return response.data;
+    deleteLogout = async (apiRequestData: ApiRequestData<null>): Promise<AxiosResponse<string>> => {
+        return await this.axiosInstance.delete<string>("users/logout", { headers: apiRequestData.headers });
     }
 
-    static async getCurrentUser(accessToken: string): Promise<User> {
-        const response = await axiosInstance.get<User>("users/current", { headers: authHeader(accessToken) });
-        return response.data;
+    getCurrentUser = async (apiRequestData: ApiRequestData<null>): Promise<AxiosResponse<User>> => {
+        return await this.axiosInstance.get<User>("users/current", { headers: apiRequestData.headers });
     }
 
-    static async getPosts(filters: Filter[], accessToken: string): Promise<Post[]> {
-        const url =
+    getPosts = async (apiRequestData: ApiRequestData<{ filters: Filter[], page: number }>): Promise<AxiosResponse<Post[]>> => {
+        const { filters } = apiRequestData.data!;
+		const url =
             "/posts" +
             (filters.length > 0 ? "?" : "") +
             filters.map((filter) => `filter=${filter.property},${filter.operator},${filter.value}`).join("&");
 
-        const response = await axiosInstance.get(url, { headers: authHeader(accessToken) });
-        return response.data;
+        return await this.axiosInstance.get(url, { headers: apiRequestData.headers });
     }
+
+	getNewAccessToken = async (apiRequestData: ApiRequestData<string>): Promise<AxiosResponse<AuthData>> => {
+		return await this.axiosInstance.post<AuthData>("users/refresh-token", { refreshToken: apiRequestData.data });
+	}
 }
+
+const apiService = new Api();
+
+export default apiService;
+

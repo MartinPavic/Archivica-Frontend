@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
+import React, { useEffect, useState } from "react";
+import { FieldValues, useForm } from "react-hook-form";
 import Image from "next/image";
 import Link from "next/link";
 import Button from "@mui/material/Button";
@@ -10,21 +10,34 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import style from "../src/styles/Sign.module.scss";
 import Copyright from "../src/components/UI/copyright";
+import useAuth from "../src/contexts/useAuth";
+import { NextPage } from "next";
+import { UserRegister } from "../src/models/user";
+import { Alert, LinearProgress, Snackbar } from "@mui/material";
 
 const theme = createTheme();
 
-const SignUpContainer = (props: any) => {
+const RegisterPage: NextPage = (): JSX.Element => {
+	const { signUp, error, loading } = useAuth();
+	const [showSnackBar, setShowSnackBar] = useState(false);
     const {
         register,
         handleSubmit,
         watch,
-        formState: { errors },
-    } = useForm();
+        formState: { errors, isValid, touchedFields },
+    } = useForm<UserRegister & { confirmPassword: string }>();
 
-    const onRegister = (registerForm: any) => {
-        props.register(registerForm);
+    const onRegister = async (values: FieldValues) => isValid ? await signUp(values as UserRegister) : null;
+
+	useEffect(() => setShowSnackBar(!!error), [error]);
+
+	const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === "clickaway") {
+            return;
+        }
+
+        setShowSnackBar(false);
     };
 
     return (
@@ -53,8 +66,8 @@ const SignUpContainer = (props: any) => {
                                     id="firstName"
                                     label="First Name"
                                     autoFocus
-                                    error={!!errors.firstName}
-                                    helperText={errors.message?.message?.toString()}
+                                    error={touchedFields.firstName && !!errors.firstName}
+                                    helperText={errors.firstName?.message}
                                     {...register("firstName", {
                                         required: "First name is required",
                                     })}
@@ -67,8 +80,8 @@ const SignUpContainer = (props: any) => {
                                     id="lastName"
                                     label="Last Name"
                                     autoComplete="family-name"
-                                    error={!!errors.lastName}
-                                    helperText={errors.message?.message?.toString()}
+                                    error={touchedFields.lastName && !!errors.lastName}
+                                    helperText={errors.lastName?.message}
                                     {...register("lastName", {
                                         required: "Last name is required",
                                     })}
@@ -81,8 +94,8 @@ const SignUpContainer = (props: any) => {
                                     id="email"
                                     label="Email Address"
                                     autoComplete="email"
-                                    error={!!errors.email}
-                                    helperText={errors.message?.message?.toString()}
+                                    error={touchedFields.email && !!errors.email}
+                                    helperText={errors.email?.message}
                                     {...register("email", {
                                         required: "E-mail address is required",
                                         pattern: {
@@ -99,8 +112,8 @@ const SignUpContainer = (props: any) => {
                                     label="Password"
                                     type="password"
                                     id="password"
-                                    error={!!errors.password}
-                                    helperText={errors.message?.message?.toString()}
+                                    error={touchedFields.password && !!errors.password}
+                                    helperText={errors.password?.message}
                                     {...register("password", {
                                         required: "Password is required",
                                         pattern: {
@@ -111,27 +124,25 @@ const SignUpContainer = (props: any) => {
                                     })}
                                 />
                             </Grid>
-                            {/* <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  name="confirmPassword"
-                  label="Confirm assword"
-                  type="confirmPassword"
-                  id="confirmPassword"
-                  error= {errors.confirmPassword}
-                  helperText = {errors.confirmPassword?.message}
-                  {...register("confirm_password", {
-                    required: true,
-                    validate: (val) => {
-                      if (watch('password') != val) {
-                        console.log("test")
-                        return "Your passwords do no match";
-                      }
-                    },
-                   })}
-                />
-              </Grid> */}
+                            <Grid item xs={12}>
+                                <TextField
+                                    required
+                                    fullWidth
+                                    label="Confirm password"
+                                    type="password"
+                                    id="confirmPassword"
+                                    error={touchedFields.confirmPassword && !!errors.confirmPassword}
+                                    helperText={errors.confirmPassword?.message}
+                                    {...register("confirmPassword", {
+                                        required: true,
+                                        validate: (val) => {
+                                            if (watch("password") != val) {
+                                                return "Your passwords do no match";
+                                            }
+                                        },
+                                    })}
+                                />
+                            </Grid>
                         </Grid>
                         <Button
                             type="submit"
@@ -142,14 +153,18 @@ const SignUpContainer = (props: any) => {
                         >
                             Sign Up
                         </Button>
+						{loading && <LinearProgress />}
                         <Grid container justifyContent="flex-end">
                             <Grid item>
-                                <Link href="/login">
-                                   Already have an account? Sign in
-                                </Link>
+                                <Link href="/login">Already have an account? Sign in</Link>
                             </Grid>
                         </Grid>
                     </form>
+					<Snackbar open={showSnackBar} autoHideDuration={6000} onClose={handleClose}>
+                        <Alert onClose={handleClose} severity="error" sx={{ width: "100%" }}>
+                            {error?.response?.data.message}
+                        </Alert>
+                    </Snackbar>
                 </Box>
                 <Copyright />
             </Container>
@@ -157,4 +172,4 @@ const SignUpContainer = (props: any) => {
     );
 };
 
-export default SignUpContainer;
+export default RegisterPage;
