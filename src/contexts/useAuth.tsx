@@ -61,16 +61,32 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         }
     }, []);
 
+	const logIn = useCallback((userAndAuthData: User & AuthData) => {
+		const user: User = {
+			email: userAndAuthData.email,
+			firstName: userAndAuthData.firstName,
+			lastName: userAndAuthData.lastName,
+			image: userAndAuthData.image,
+		};
+		const authData: AuthData = {
+			accessToken: userAndAuthData.accessToken,
+			refreshToken: userAndAuthData.refreshToken,
+		};
+		setUser(user);
+		setAuthData(authData);
+		setError(null);
+		localStorage.setItem(constants.authKey, JSON.stringify(authData));
+		router.push("/");
+	}, [])
+
     const signUp = useCallback(
         async (userRegister: UserRegister) => {
             setLoading(true);
 
             await apiService
                 .postRegister({ data: userRegister })
-                .then(() => {
-                    setError(null);
-                    router.push("/login");
-                })
+				.then((res) => res.data)
+                .then(logIn)
                 .catch((error) => setError(error))
                 .finally(() => setLoading(false));
         },
@@ -84,23 +100,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             await apiService
                 .postLogin({ data: userLogin })
                 .then((res) => res.data)
-                .then((userAndAuthData) => {
-                    const user: User = {
-                        email: userAndAuthData.email,
-                        firstName: userAndAuthData.firstName,
-                        lastName: userAndAuthData.lastName,
-                        image: userAndAuthData.image,
-                    };
-                    const authData: AuthData = {
-                        accessToken: userAndAuthData.accessToken,
-                        refreshToken: userAndAuthData.refreshToken,
-                    };
-                    setUser(user);
-                    setAuthData(authData);
-                    setError(null);
-                    localStorage.setItem(constants.authKey, JSON.stringify(authData));
-                    router.push("/");
-                })
+                .then(logIn)
                 .catch((error) => setError(error))
                 .finally(() => setLoading(false));
         },
@@ -157,7 +157,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 						setError(error);
 						return null;
 					});
-					console.log(newResponse)
                     setUser(newResponse);
                     return newResponse;
                 }
@@ -165,12 +164,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 setError(error);
 				return null;
             });
-		console.log(response);
-		console.log(error);
         setUser(response);
         setLoading(false);
         return response;
-    }, []);
+    }, [getNewAccessToken, user]);
 
     const memoedValue = useMemo(
         () => ({

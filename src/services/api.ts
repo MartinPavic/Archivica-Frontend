@@ -23,8 +23,8 @@ class Api {
 		});
 	}
 
-    postRegister = async (apiRequestData: ApiRequestData<UserRegister>): Promise<AxiosResponse<User>> => {
-        return await this.axiosInstance.post<User>("users/register", apiRequestData.data, { headers: apiRequestData.headers });
+    postRegister = async (apiRequestData: ApiRequestData<UserRegister>): Promise<AxiosResponse<User & AuthData>> => {
+        return await this.axiosInstance.post<User & AuthData>("users/register", apiRequestData.data, { headers: apiRequestData.headers });
     }
 
     postLogin = async (apiRequestData: ApiRequestData<UserLogin>): Promise<AxiosResponse<User & AuthData>> => {
@@ -40,10 +40,10 @@ class Api {
     }
 
     getPosts = async (apiRequestData: ApiRequestData<{ filters: Filter[], page: number }>): Promise<AxiosResponse<Post[]>> => {
-        const { filters } = apiRequestData.data!;
+        const { filters, page } = apiRequestData.data!;
 		const url =
-            "/posts" +
-            (filters.length > 0 ? "?" : "") +
+            "/posts?page=" + page +
+            (filters.length > 0 ? "&" : "") +
             filters.map((filter) => `filter=${filter.property},${filter.operator},${filter.value}`).join("&");
 
         return await this.axiosInstance.get(url, { headers: apiRequestData.headers });
@@ -51,6 +51,10 @@ class Api {
 
 	getNewAccessToken = async (apiRequestData: ApiRequestData<string>): Promise<AxiosResponse<AuthData>> => {
 		return await this.axiosInstance.post<AuthData>("users/refresh-token", { refreshToken: apiRequestData.data });
+	}
+
+	forgotPassword = async (apiRequestData: ApiRequestData<string>): Promise<AxiosResponse<string>> => {
+		return await this.axiosInstance.post<string>("users/forgot-password", { email: apiRequestData.data });
 	}
 }
 

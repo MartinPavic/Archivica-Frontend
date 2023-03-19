@@ -1,13 +1,12 @@
-import React, { memo, useState } from "react";
+import React, { useState } from "react";
 import Head from "next/head";
 import SideFilter from "../src/components/sideFilter";
 import PostPreview from "../src/components/postPreview";
-import BlogPreview from "../src/components/blogPreview";
 import AddPost from "../src/components/modal/addPost";
 import PostCreate from "../src/components/postCreate/postCreate";
 
 import style from "../src/styles/Home.module.scss";
-import useAuthenticatedRequest from "../src/hooks/useRequest";
+import { useAuthenticatedRequest } from "../src/hooks/useRequest";
 import apiService from "../src/services/api";
 import { Filter } from "../src/models/filter";
 import { Alert, LinearProgress, Snackbar } from "@mui/material";
@@ -36,8 +35,8 @@ const Homepage = (props: any) => {
                 <SideFilter />
             </div>
             <div className={style.right}>
+				<PostCreate />
 				{isLoading && <LinearProgress />}
-                <PostCreate />
 				{posts && posts.map((post) => (
 					<PostPreview
 						key={post._id}

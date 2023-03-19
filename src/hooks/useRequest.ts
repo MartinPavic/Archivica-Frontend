@@ -9,6 +9,36 @@ interface UseRequestProps<Rq, Rs> {
     callImmediately?: boolean;
 }
 
+const useRequest = <Rq, Rs>(props: UseRequestProps<Rq, Rs>, ...args: any): [() => Promise<void>, Rs | null, boolean, string | null] => {
+	const { request, requestData, callImmediately } = props;
+
+	const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [data, setData] = useState<Rs | null>(null);
+
+	const callRequest = useCallback(async () => {
+        setLoading(true);
+        await request({ data: requestData }, ...args)
+            .then((response) => {
+                setData(response.data);
+                setError(null);
+            })
+            .catch((error) => {
+                setData(null);
+                setError(error.toString());
+            })
+            .finally(() => setLoading(false));
+    }, [request, requestData, args]);
+
+	useEffect(() => {
+        if (callImmediately) {
+            callRequest();
+        }
+    }, []);
+
+    return [callRequest, data, loading, error];
+}
+
 const useAuthenticatedRequest = <Rq, Rs>(
     props: UseRequestProps<Rq, Rs>,
     ...args: any
@@ -54,4 +84,4 @@ const useAuthenticatedRequest = <Rq, Rs>(
     return [callRequest, data, loading, error];
 };
 
-export default useAuthenticatedRequest;
+export { useAuthenticatedRequest, useRequest };

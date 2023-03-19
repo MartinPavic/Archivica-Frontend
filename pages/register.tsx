@@ -137,7 +137,7 @@ const RegisterPage: NextPage = (): JSX.Element => {
                                         required: true,
                                         validate: (val) => {
                                             if (watch("password") != val) {
-                                                return "Your passwords do no match";
+                                                return "Your passwords do not match";
                                             }
                                         },
                                     })}

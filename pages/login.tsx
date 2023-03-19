@@ -90,6 +90,11 @@ const LoginPage: NextPage = (): JSX.Element => {
                                 },
                             })}
                         />
+                        <Grid container justifyContent="flex-end">
+                            <Grid item>
+                                <Link className="underline" href={"/forgot-password"}>Forgot password?</Link>
+                            </Grid>
+                        </Grid>
                         {/* <FormControlLabel control={<Checkbox checked={rememberMe} onChange={handleRememberMe} color="primary" />} label="Remember me" /> */}
                         <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }} disabled={!isValid}>
                             Sign In
