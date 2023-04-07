@@ -14,11 +14,7 @@ import { Alert, LinearProgress, Snackbar } from "@mui/material";
 const Homepage = (props: any) => {
     const [filters, setFilters] = useState<Filter[]>([]);
 	const [page, setPage] = useState<number>(1);
-    const [_, posts, isLoading, error] = useAuthenticatedRequest({
-        request: apiService.getPosts,
-        requestData: { filters, page },
-        callImmediately: true
-    });
+    const getPostsRequest = useAuthenticatedRequest({ request: apiService.getPosts });
 	const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === "clickaway") {
             return;
@@ -31,36 +27,24 @@ const Homepage = (props: any) => {
                 <meta name="description" content="Archivica project" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <div className={style.left}>
+            {/* <div className={style.left}>
                 <SideFilter />
-            </div>
+            </div> */}
             <div className={style.right}>
 				<PostCreate />
-				{isLoading && <LinearProgress />}
-				{posts && posts.map((post) => (
+				{getPostsRequest.loading && <LinearProgress />}
+				{getPostsRequest.data && getPostsRequest.data.map((post) => (
 					<PostPreview
 						key={post._id}
 						image="/assets/images/temp/tempPlace.jpg"
 						description={post.description}
             		/>
 				))}
-				<Snackbar open={!!error} autoHideDuration={6000} onClose={handleClose}>
+				<Snackbar open={!!getPostsRequest.error} autoHideDuration={6000} onClose={handleClose}>
 					<Alert onClose={handleClose} severity="error" sx={{ width: "100%" }}>
-						{error}
+						{getPostsRequest.error}
 					</Alert>
 				</Snackbar>
-                {/* <PostPreview
-                    image="/assets/images/temp/tempPlace.jpg"
-                    description="Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur placeat consectetur itaque? A, sint voluptates amet minus quam nam distinctio sunt impedit quasi natus omnis itaque dolorum consectetur mollitia asperiores."
-                />
-                <PostPreview description="Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur placeat consectetur itaque? A, sint voluptates amet minus quam nam distinctio sunt impedit quasi natus omnis itaque dolorum consectetur mollitia asperiores." />
-                <BlogPreview />
-                <PostPreview image="/assets/images/temp/tempPlace.jpg" />
-                <PostPreview image="/assets/images/temp/tempPlace.jpg" />
-                <PostPreview image="/assets/images/temp/tempPlace.jpg" />
-                <PostPreview image="/assets/images/temp/tempPlace.jpg" />
-                <PostPreview image="/assets/images/temp/tempPlace.jpg" /> */}
-                {/* // TODO AddPost modal still in progress by Klara V. */}
                 <AddPost openModal={false} />
             </div>
         </>

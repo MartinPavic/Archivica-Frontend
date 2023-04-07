@@ -8,14 +8,15 @@ import { AiFillLike } from 'react-icons/ai';
 import Button from '@mui/material/Button';
 import style from './style.module.scss';
 import Image from 'next/image';
-const PostDetails = props => {
+
+const PostDetails = (props: any) => {
     const [ showCommentSection, setShowCommentSection ] = React.useState(false);
     const [ showDetails, setShowDetails ] = React.useState(true);
 
     return (
         <div className={style.postDetails}>
             <i onClick={props.onClose} />
-            <Image className={style.postDetails_image} src={props.image} alt="" width={100} height={100} onClick={() => setShowDetails(!showDetails)} />
+            <Image className={style.postDetails_image} src={props.image} alt="" onClick={() => setShowDetails(!showDetails)} />
             <div className={[style.postDetails_content, showDetails ? style.active : ''].join(' ')}>
                 <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sequi quia natus aut, odit esse hic rem. Illo ducimus animi, quos beatae reiciendis at, rerum velit voluptate aperiam, nihil repellat sunt?</p>
                 <div>

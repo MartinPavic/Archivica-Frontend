@@ -42,7 +42,7 @@ const Header = (props: any) => {
                                 <Navigation/>
                             </div>
                             <div className={style.searchWrapper}>
-                                <div className={style.search}>
+                                {/* <div className={style.search}>
                                     <div className={style.searchIconWrapper}>
                                         <SearchIcon className={style.icon} sx={{ width: 20, height: 20 }}/>
                                     </div>
@@ -51,7 +51,7 @@ const Header = (props: any) => {
                                         inputProps={{ 'aria-label': 'search' }}
                                         className={style.inputBase}
                                     />
-                                </div>
+                                </div> */}
                                 <IconButton
                                     size="large"
                                 >

@@ -9,13 +9,13 @@ import { AuthProvider } from "../src/contexts/useAuth";
 const App = ({ Component, pageProps }: AppProps) => {
     return (
 		<AuthProvider>
-			<AuthGuard>
+			{/* <AuthGuard> */}
 				<Header />
 				<main>
 					<Component {...pageProps} />
 					{/* <ActionMenu /> */}
 				</main>	
-			</AuthGuard>
+			{/* </AuthGuard> */}
 		</AuthProvider>
     );
 };

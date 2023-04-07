@@ -2,7 +2,7 @@ import axios, { AxiosInstance, AxiosResponse, RawAxiosRequestHeaders } from "axi
 import { AuthData } from "../models/auth";
 import { Filter } from "../models/filter";
 import { Post } from "../models/post";
-import { User, UserLogin, UserRegister } from "../models/user";
+import { User, UserLogin, UserRegister, UserResetPassword, UserValidateToken } from "../models/user";
 
 export interface ApiRequestData<T> {
 	data?: T
@@ -55,6 +55,14 @@ class Api {
 
 	forgotPassword = async (apiRequestData: ApiRequestData<string>): Promise<AxiosResponse<string>> => {
 		return await this.axiosInstance.post<string>("users/forgot-password", { email: apiRequestData.data });
+	}
+
+	validateToken = async (apiRequestData: ApiRequestData<UserValidateToken>): Promise<AxiosResponse<boolean>> => {
+		return await this.axiosInstance.post<boolean>("users/validate-token", { email: apiRequestData.data?.email, token: apiRequestData.data?.token});
+	}
+
+	resetPassword = async (apiRequestData: ApiRequestData<UserResetPassword>): Promise<AxiosResponse<string>> => {
+		return await this.axiosInstance.post<string>("users/reset-password", apiRequestData.data)
 	}
 }
 
