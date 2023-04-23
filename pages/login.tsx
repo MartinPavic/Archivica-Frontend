@@ -25,7 +25,7 @@ import { SnackbarWrapper } from "../src/components/snackbarWrapper";
 const theme = createTheme();
 
 const LoginPage: NextPage = (): JSX.Element => {
-    const { signIn, error, loading } = useAuth();
+    const { signIn, loading } = useAuth();
     const {
         register,
         handleSubmit,
@@ -38,7 +38,7 @@ const LoginPage: NextPage = (): JSX.Element => {
         <ThemeProvider theme={theme}>
             <Container maxWidth="xs">
                 <CssBaseline />
-				<SnackbarWrapper show={!!error} message={error?.response?.data.message!} success={false}>
+				<SnackbarWrapper show={false} message={""!} success={false}>
 					<Box display="flex" flexDirection="column" alignItems="center">
 						<Image src="/assets/images/logo.png" width={150} height={100} alt={""} />
 						<Typography component="h1" variant="h5" sx={{ mt: 5 }}>

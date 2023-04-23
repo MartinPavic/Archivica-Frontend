@@ -22,7 +22,7 @@ export const SnackbarWrapper = ({ children, show, success, message }: SnackbarWr
     return (
         <>
             {children}
-            <Snackbar open={showSnackBar} autoHideDuration={6000} onClose={handleClose}>
+            <Snackbar open={showSnackBar} autoHideDuration={4000} onClose={handleClose}>
                 <Alert onClose={handleClose} severity={success ? "success" : "error"} sx={{ width: "100%" }}>
                     {message}
                 </Alert>

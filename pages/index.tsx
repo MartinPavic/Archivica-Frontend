@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import SideFilter from "../src/components/sideFilter";
 import PostPreview from "../src/components/postPreview";
@@ -20,6 +20,9 @@ const Homepage = (props: any) => {
             return;
         }
     };
+	useEffect(() => {
+		getPostsRequest.call({ filters, page })
+	}, [filters, page]);
     return (
         <>
             <Head>

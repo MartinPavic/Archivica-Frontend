@@ -29,7 +29,7 @@ const ResetPasswordFormOrNotFound = ({ email, token }: { email: string, token: s
 
 	useEffect(() => { 
 		validateTokenRequest.call({ email, token })
-	}, []);
+	}, [email, token]);
 
 	if (validateTokenRequest.loading) {
 		return <CircularProgress />
