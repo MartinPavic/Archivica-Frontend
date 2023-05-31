@@ -55,12 +55,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const getAuthData = useCallback((): AuthData | null => {
         try {
             const data = localStorage.getItem(constants.authKey);
-            if (data == "null") {
+            if (data || data === null || data == "null") {
                 setAuthData(null);
             	setInitializing(false);
                 return null;
             }
-            const parsed = JSON.parse(data!) as AuthData;
+            const parsed = JSON.parse(data) as AuthData;
             setAuthData(parsed);
             return parsed;
         } catch (e) {

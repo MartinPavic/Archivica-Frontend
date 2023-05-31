@@ -19,7 +19,6 @@ const HomePage: NextPage = () => {
             sx={{ backgroundImage: `url(${background.src})`, minHeight: "400px", backdropFilter: "blur(4.7px)" }}
         >
             <Container className="no-scrollbar relative top-16 overflow-y-scroll">
-
                 <PostFeed />
             </Container>
             <Fab

@@ -25,7 +25,7 @@ const AuthGuard = (props: { children: JSX.Element[] | JSX.Element }): JSX.Elemen
     }, [initializing, user, router]);
 
     if (initializing) {
-        return <CircularProgress></CircularProgress>;
+        return <div>Connecting to the server...</div>;
     }
 
     if (!initializing && (user || PUBLIC_PATHS.includes(router.route))) {
