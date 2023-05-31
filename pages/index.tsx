@@ -1,57 +1,39 @@
-import React, { useEffect, useState } from "react";
-import Head from "next/head";
-import SideFilter from "../src/components/sideFilter";
-import PostPreview from "../src/components/postPreview";
+import { NextPage } from "next";
+import useAuth from "../src/contexts/useAuth";
+import { Box, Container, Fab } from "@mui/material";
+import background from "../assets/images/buildings.jpg";
+import PostFeed from "../src/components/postFeed/postFeed";
+import { Center } from "../src/components/center";
+import { Add, Close } from "@mui/icons-material";
+import { useRouter } from "next/router";
 import AddPost from "../src/components/modal/addPost";
-import PostCreate from "../src/components/postCreate/postCreate";
+import { useState } from "react";
 
-import style from "../src/styles/Home.module.scss";
-import { useAuthenticatedRequest } from "../src/hooks/useRequest";
-import apiService from "../src/services/api";
-import { Filter } from "../src/models/filter";
-import { Alert, LinearProgress, Snackbar } from "@mui/material";
-
-const Homepage = (props: any) => {
-    const [filters, setFilters] = useState<Filter[]>([]);
-	const [page, setPage] = useState<number>(1);
-    const getPostsRequest = useAuthenticatedRequest({ request: apiService.getPosts });
-	const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
-        if (reason === "clickaway") {
-            return;
-        }
-    };
-	useEffect(() => {
-		getPostsRequest.call({ filters, page })
-	}, [filters, page]);
+const HomePage: NextPage = () => {
+	const router = useRouter();
+    const { user } = useAuth();
+	const [open, setOpen] = useState(false);
     return (
-        <>
-            <Head>
-                <title>Arhivica</title>
-                <meta name="description" content="Archivica project" />
-                <link rel="icon" href="/favicon.ico" />
-            </Head>
-            {/* <div className={style.left}>
-                <SideFilter />
-            </div> */}
-            <div className={style.right}>
-				<PostCreate />
-				{getPostsRequest.loading && <LinearProgress />}
-				{getPostsRequest.data && getPostsRequest.data.map((post) => (
-					<PostPreview
-						key={post._id}
-						image="/assets/images/temp/tempPlace.jpg"
-						description={post.description}
-            		/>
-				))}
-				<Snackbar open={!!getPostsRequest.error} autoHideDuration={6000} onClose={handleClose}>
-					<Alert onClose={handleClose} severity="error" sx={{ width: "100%" }}>
-						{getPostsRequest.error}
-					</Alert>
-				</Snackbar>
-                <AddPost openModal={false} />
-            </div>
-        </>
+        <Box
+            className="no-scrollbar w-full h-screen flex justify-center px-12"
+            sx={{ backgroundImage: `url(${background.src})`, minHeight: "400px", backdropFilter: "blur(4.7px)" }}
+        >
+            <Container className="no-scrollbar relative top-16 overflow-y-scroll">
+
+                <PostFeed />
+            </Container>
+            <Fab
+                className="fixed z-90 bottom-10 right-8 bg-blue-600 rounded-full drop-shadow-lg flex justify-center items-center text-white text-4xl"
+                color="primary"
+                aria-label="add"
+				onClick={() => setOpen(!open)}
+            >
+                {open ? <Close /> : <Add />}
+            </Fab>
+			<AddPost openModal={open}/>
+            {/* <SectionMenu /> */}
+        </Box>
     );
 };
 
-export default Homepage;
+export default HomePage;

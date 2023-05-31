@@ -26,7 +26,7 @@ const RegisterPage: NextPage = (): JSX.Element => {
         handleSubmit,
         watch,
         formState: { errors, isValid, touchedFields },
-    } = useForm<UserRegister & { confirmPassword: string }>();
+    } = useForm<UserRegister & { confirmPassword: string }>({ mode: "onChange" });
 
     const onRegister = async (values: FieldValues) => isValid ? await signUp(values as UserRegister) : null;
 
@@ -149,6 +149,7 @@ const RegisterPage: NextPage = (): JSX.Element => {
                             type="submit"
                             fullWidth
                             variant="contained"
+							className="bg-primary"
                             sx={{ mt: 3, mb: 2 }}
                             disabled={!isValid}
                         >

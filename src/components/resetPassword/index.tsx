@@ -72,7 +72,7 @@ export const ResetPasswordForm = ({ email, token }: { email: string, token: stri
 						validate: (value: string) => watch("newPassword") === value || "Passwords do not match"
 					})}
 				/>
-				<Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }} disabled={!isValid || resetPasswordRequest.loading}>
+				<Button type="submit" className="bg-primary" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }} disabled={!isValid || resetPasswordRequest.loading}>
 					Reset password
 				</Button>
 				{resetPasswordRequest.loading && <LinearProgress />}

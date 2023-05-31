@@ -36,7 +36,7 @@ const AccountMenu = (props: any) => {
                 style={{ color: '#002d3d', fontWeight: 600}}
                 // className={style.icon}
             >
-                <Avatar alt="Remy Sharp" src='../../../assets/images/temp/tempUser.jpg' sx={{ width: 40, height: 40 }} />
+                <Avatar alt="Remy Sharp" src='../../../assets/images/temp/tempUser.jpg'  />
             </IconButton>
             <Menu
                 id="menu-appbar"

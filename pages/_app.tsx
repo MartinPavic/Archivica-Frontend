@@ -5,18 +5,24 @@ import AuthGuard from "../src/guards/authGuard";
 import React from "react";
 import { AppProps } from "next/app";
 import { AuthProvider } from "../src/contexts/useAuth";
+import Head from "next/head";
 
 const App = ({ Component, pageProps }: AppProps) => {
     return (
-		<AuthProvider>
-			<AuthGuard>
-				<Header />
-				<main>
-					<Component {...pageProps} />
-					{/* <ActionMenu /> */}
-				</main>	
-			</AuthGuard>
-		</AuthProvider>
+        <AuthProvider>
+			<Head>
+                <title>Arhivica</title>
+                <meta name="description" content="Archivica project" />
+                <link rel="icon" href="/favicon.ico" />
+            </Head>
+            <Header />
+            <main>
+				<AuthGuard>
+                	<Component {...pageProps} />
+				</AuthGuard>
+                {/* <ActionMenu /> */}
+            </main>
+        </AuthProvider>
     );
 };
 
