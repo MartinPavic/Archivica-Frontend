@@ -62,7 +62,7 @@ const Homepage = (props: any) => {
                 <PostPreview image="/assets/images/temp/tempPlace.jpg" />
                 <PostPreview image="/assets/images/temp/tempPlace.jpg" /> */}
                 {/* // TODO AddPost modal still in progress by Klara V. */}
-                <AddPost openModal={false} />
+                <AddPost />
             </div>
         </>
     );

@@ -52,6 +52,11 @@ class Api {
 	getNewAccessToken = async (apiRequestData: ApiRequestData<string>): Promise<AxiosResponse<AuthData>> => {
 		return await this.axiosInstance.post<AuthData>("users/refresh-token", { refreshToken: apiRequestData.data });
 	}
+
+    postPost = async(apiRequestData: ApiRequestData<Post>) : Promise<AxiosResponse<Post>> => {
+        console.log('test')
+        return await this.axiosInstance.post<Post>("/posts", apiRequestData.data, { headers: apiRequestData.headers })
+    }
 }
 
 const apiService = new Api();
