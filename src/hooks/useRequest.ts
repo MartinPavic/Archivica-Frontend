@@ -59,7 +59,7 @@ const useAuthenticatedRequest = <Rq, Rs>(props: UseRequestProps<Rq, Rs>): UseReq
             })
             .catch(async (error: AxiosError) => {
                 if (error.response && error.response.status === 401) {
-                    const newAuthData = await getNewAccessToken();
+                    const newAuthData = await getNewAccessToken(authData!);
                     const newResponse = await request(
                         { data: requestData, headers: authHeader(newAuthData?.accessToken!) },
                         ...args

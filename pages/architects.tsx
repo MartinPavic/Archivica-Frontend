@@ -9,6 +9,7 @@ import YearFilter from "../src/components/filtering/yearFilter";
 
 import homeStyle from "../src/styles/Home.module.scss";
 import archStyle from "../src/styles/Architects.module.scss";
+import AuthGuard from "../src/guards/authGuard";
 
 const selectData = [
     {

@@ -29,9 +29,9 @@ const Header = (props: any) => {
                 {/* <AppBar position="static"> */}
                     {/* <Toolbar className={style.header}> */}
                         <Typography
-                            variant="h6"
+                            variant="h1"
                             noWrap
-                            component="div"
+                            component="h1"
                             sx={{ flexGrow: 1, cursor: 'pointer', display: { xs: 'none', sm: 'block' } }}
                         />
                         <div className={style.header}>
@@ -57,7 +57,7 @@ const Header = (props: any) => {
                                 >
                                     <Notifications/>
                                 </IconButton>
-                                {user ? <AccountMenu /> : <LoginMenu />}
+                                <AccountMenu />
                                 <IconButton
                                     size="large"
                                     edge="end"

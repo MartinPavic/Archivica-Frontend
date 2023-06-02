@@ -11,10 +11,11 @@ interface IAuth {
     authData: AuthData | null;
     error: AxiosError<Error> | null;
     loading: boolean;
+	initializing: boolean;
     signUp: (userRegister: UserRegister) => Promise<void>;
     signIn: (userLogin: UserLogin) => Promise<void>;
     logout: () => Promise<void>;
-    getNewAccessToken: () => Promise<AuthData | null>;
+    getNewAccessToken: (authData: AuthData) => Promise<AuthData | null>;
 }
 
 const AuthContext = createContext<IAuth>({
@@ -22,6 +23,7 @@ const AuthContext = createContext<IAuth>({
     authData: null,
     error: null,
     loading: false,
+	initializing: true,
     signUp: async () => {},
     signIn: async () => {},
     logout: async () => {},
@@ -40,6 +42,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [authData, setAuthData] = useState<AuthData | null>(null);
     const [error, setError] = useState<AxiosError<Error> | null>(null);
     const [loading, setLoading] = useState(false);
+	const [initializing, setInitializing] = useState(true);
 
     // Initial fetch of authData and user
     useEffect(() => {
@@ -47,37 +50,43 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 		if (initialAuthData) {
 			getCurrentUser(initialAuthData);
 		}
-	}, []);
+    }, []);
 
     const getAuthData = useCallback((): AuthData | null => {
         try {
             const data = localStorage.getItem(constants.authKey);
+            if (data == "null") {
+                setAuthData(null);
+            	setInitializing(false);
+                return null;
+            }
             const parsed = JSON.parse(data!) as AuthData;
             setAuthData(parsed);
             return parsed;
         } catch (e) {
+            setInitializing(false);
             setAuthData(null);
             return null;
         }
     }, []);
 
-	const logIn = useCallback((userAndAuthData: User & AuthData) => {
-		const user: User = {
-			email: userAndAuthData.email,
-			firstName: userAndAuthData.firstName,
-			lastName: userAndAuthData.lastName,
-			image: userAndAuthData.image,
-		};
-		const authData: AuthData = {
-			accessToken: userAndAuthData.accessToken,
-			refreshToken: userAndAuthData.refreshToken,
-		};
-		setUser(user);
-		setAuthData(authData);
-		setError(null);
-		localStorage.setItem(constants.authKey, JSON.stringify(authData));
-		router.push("/");
-	}, [])
+    const logIn = useCallback((userAndAuthData: User & AuthData) => {
+        const user: User = {
+            email: userAndAuthData.email,
+            firstName: userAndAuthData.firstName,
+            lastName: userAndAuthData.lastName,
+            image: userAndAuthData.image,
+        };
+        const authData: AuthData = {
+            accessToken: userAndAuthData.accessToken,
+            refreshToken: userAndAuthData.refreshToken,
+        };
+        setUser(user);
+        setAuthData(authData);
+        setError(null);
+        localStorage.setItem(constants.authKey, JSON.stringify(authData));
+        router.push("/");
+    }, []);
 
     const signUp = useCallback(
         async (userRegister: UserRegister) => {
@@ -85,12 +94,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
             await apiService
                 .postRegister({ data: userRegister })
-				.then((res) => res.data)
+                .then((res) => res.data)
                 .then(logIn)
                 .catch((error) => setError(error))
                 .finally(() => setLoading(false));
         },
-        [router]
+        [logIn]
     );
 
     const signIn = useCallback(
@@ -104,7 +113,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 .catch((error) => setError(error))
                 .finally(() => setLoading(false));
         },
-        [router]
+        [logIn]
     );
 
     const logout = useCallback(async () => {
@@ -124,10 +133,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             .finally(() => setLoading(false));
     }, [authData?.accessToken, router]);
 
-	const getNewAccessToken = useCallback(async (): Promise<AuthData | null> => {
-        if (!authData) return null;
+    const getNewAccessToken = useCallback(async (oldAuthData: AuthData): Promise<AuthData | null> => {
         const response: AuthData | null = await apiService
-            .getNewAccessToken({ data: authData.refreshToken })
+            .getNewAccessToken({ data: oldAuthData.refreshToken })
             .then((res) => res.data)
             .catch((error) => {
                 setError(error);
@@ -139,35 +147,39 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         localStorage.setItem(constants.authKey, JSON.stringify(response));
         setLoading(false);
         return response;
-    }, [authData]);
+    }, []);
 
-    const getCurrentUser = useCallback(async (authData: AuthData): Promise<User | null> => {
-        if (user) return user;
-        setLoading(true);
-        const response: User | null = await apiService
-            .getCurrentUser({ headers: authHeader(authData.accessToken) })
-            .then((res) => res.data)
-            .catch(async (error: AxiosError<Error>) => {
-                if (error.response && error.response.status === 401) {
-                    const newAuthData = await getNewAccessToken();
-                    const newResponse = await apiService.getCurrentUser(
-                        { headers: authHeader(newAuthData?.accessToken!) },
-                    ).then((res) => res.data)
-					.catch((error) => {
-						setError(error);
-						return null;
-					});
-                    setUser(newResponse);
-                    return newResponse;
-                }
-                setUser(null);
-                setError(error);
-				return null;
-            });
-        setUser(response);
-        setLoading(false);
-        return response;
-    }, [getNewAccessToken, user]);
+    const getCurrentUser = useCallback(
+        async (authData: AuthData): Promise<User | null> => {
+            if (user) return user;
+            setLoading(true);
+            const response: User | null = await apiService
+                .getCurrentUser({ headers: authHeader(authData.accessToken) })
+                .then((res) => res.data)
+                .catch(async (error: AxiosError<Error>) => {
+                    if (error.response && error.response.status === 401) {
+                        const newAuthData = await getNewAccessToken(authData);
+                        const newResponse = await apiService
+                            .getCurrentUser({ headers: authHeader(newAuthData?.accessToken!) })
+                            .then((res) => res.data)
+                            .catch((error) => {
+                                setError(error);
+                                return null;
+                            });
+                        setUser(newResponse);
+                        return newResponse;
+                    }
+                    setUser(null);
+                    setError(error);
+                    return null;
+                });
+            setUser(response);
+            setLoading(false);
+			setInitializing(false);
+            return response;
+        },
+        [getNewAccessToken, user]
+    );
 
     const memoedValue = useMemo(
         () => ({
@@ -177,10 +189,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             signIn,
             error,
             loading,
+			initializing,
             logout,
             getNewAccessToken,
         }),
-        [user, authData, signUp, signIn, error, loading, logout, getNewAccessToken]
+        [user, authData, signUp, signIn, error, loading, initializing, logout, getNewAccessToken]
     );
 
     return <AuthContext.Provider value={memoedValue}>{children}</AuthContext.Provider>;
