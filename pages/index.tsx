@@ -25,6 +25,7 @@ const HomePage: NextPage = () => {
                 className="fixed z-90 bottom-10 right-8 bg-blue-600 rounded-full drop-shadow-lg flex justify-center items-center text-white text-4xl"
                 color="primary"
                 aria-label="add"
+				sx={{ position: "fixed" }}
 				onClick={() => setOpen(!open)}
             >
                 {open ? <Close /> : <Add />}
