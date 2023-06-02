@@ -53,7 +53,7 @@ const RegisterPage: NextPage = (): JSX.Element => {
                     }}
                 >
                     <Image src="/assets/images/logo.png" height={100} width={150} alt={""} />
-                    <Typography component="h1" variant="h5" sx={{ mt: 5 }}>
+                    <Typography component="h1" variant="h5" sx={{ my: 5 }}>
                         Sign up
                     </Typography>
                     <form noValidate onSubmit={handleSubmit(onRegister)}>
@@ -91,6 +91,7 @@ const RegisterPage: NextPage = (): JSX.Element => {
                                 <TextField
                                     required
                                     fullWidth
+									type="email"
                                     id="email"
                                     label="Email Address"
                                     autoComplete="email"
@@ -149,14 +150,14 @@ const RegisterPage: NextPage = (): JSX.Element => {
                             fullWidth
                             variant="contained"
                             sx={{ mt: 3, mb: 2 }}
-                            disabled={!!errors.email || !!errors.password}
+                            disabled={!isValid}
                         >
                             Sign Up
                         </Button>
 						{loading && <LinearProgress />}
                         <Grid container justifyContent="flex-end">
                             <Grid item>
-                                <Link href="/login">Already have an account? Sign in</Link>
+							Already have an account? <Link className="underline" href="/login">Sign in</Link>
                             </Grid>
                         </Grid>
                     </form>

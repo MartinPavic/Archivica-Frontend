@@ -5,45 +5,43 @@ import { ApiRequestData } from "../services/api";
 
 interface UseRequestProps<Rq, Rs> {
     request: (data: ApiRequestData<Rq>, ...args: any) => Promise<AxiosResponse<Rs>>;
-    requestData?: Rq;
-    callImmediately?: boolean;
 }
 
-const useRequest = <Rq, Rs>(props: UseRequestProps<Rq, Rs>, ...args: any): [() => Promise<void>, Rs | null, boolean, string | null] => {
-	const { request, requestData, callImmediately } = props;
+interface UseRequestReturn<Rq, Rs> {
+	call: (requestdata: Rq, ...args: any) => Promise<Rs | null>;
+	data: Rs | null;
+	loading: boolean;
+	error: string | null;
+}
+
+const useRequest = <Rq, Rs>(props: UseRequestProps<Rq, Rs>): UseRequestReturn<Rq, Rs> => {
+	const { request } = props;
 
 	const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [data, setData] = useState<Rs | null>(null);
 
-	const callRequest = useCallback(async () => {
+	const call = useCallback(async (requestData: Rq, ...args: any) => {
         setLoading(true);
-        await request({ data: requestData }, ...args)
+        return await request({ data: requestData }, ...args)
             .then((response) => {
                 setData(response.data);
                 setError(null);
+				return response.data;
             })
-            .catch((error) => {
+            .catch((error: AxiosError<{name: string, message: string}>) => {
                 setData(null);
-                setError(error.toString());
+                setError(`${error.response?.data.name}: ${error.response?.data.message}`);
+				return null;
             })
             .finally(() => setLoading(false));
-    }, [request, requestData, args]);
+    }, [request]);
 
-	useEffect(() => {
-        if (callImmediately) {
-            callRequest();
-        }
-    }, []);
-
-    return [callRequest, data, loading, error];
+    return { call, data, loading, error };
 }
 
-const useAuthenticatedRequest = <Rq, Rs>(
-    props: UseRequestProps<Rq, Rs>,
-    ...args: any
-): [() => Promise<void>, Rs | null, boolean, string | null] => {
-    const { request, requestData, callImmediately } = props;
+const useAuthenticatedRequest = <Rq, Rs>(props: UseRequestProps<Rq, Rs>): UseRequestReturn<Rq, Rs> => {
+    const { request } = props;
 
     const { authData, getNewAccessToken } = useAuth();
 
@@ -51,12 +49,13 @@ const useAuthenticatedRequest = <Rq, Rs>(
     const [loading, setLoading] = useState<boolean>(false);
     const [data, setData] = useState<Rs | null>(null);
 
-    const callRequest = useCallback(async () => {
+    const call = useCallback(async (requestData: Rq, ...args: any) => {
         setLoading(true);
-        await request({ data: requestData, headers: authHeader(authData?.accessToken!) }, ...args)
+        return await request({ data: requestData, headers: authHeader(authData?.accessToken!) }, ...args)
             .then((response) => {
                 setData(response.data);
                 setError(null);
+				return response.data;
             })
             .catch(async (error: AxiosError) => {
                 if (error.response && error.response.status === 401) {
@@ -67,21 +66,16 @@ const useAuthenticatedRequest = <Rq, Rs>(
                     );
                     setData(newResponse.data);
                     setError(null);
-                    return;
+                    return newResponse.data;
                 }
                 setData(null);
                 setError(error.toString());
+				return null;
             })
             .finally(() => setLoading(false));
-    }, [request, requestData, authData?.accessToken, args, getNewAccessToken]);
+    }, [request, authData?.accessToken, getNewAccessToken]);
 
-    useEffect(() => {
-        if (callImmediately) {
-            callRequest();
-        }
-    }, []);
-
-    return [callRequest, data, loading, error];
+    return { call, data, loading, error };
 };
 
 export { useAuthenticatedRequest, useRequest };

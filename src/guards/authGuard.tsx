@@ -11,7 +11,7 @@ const AuthGuard = (props: { children: JSX.Element[] | JSX.Element }): JSX.Elemen
 
 	const authCheck = useCallback(async (url: string) => {
         // redirect to login page if accessing a private page and not logged in
-        const publicPaths = ["/login", "/register", "/forgot-password"];
+        const publicPaths = ["/login", "/register", "/forgot-password", "/reset-password"];
         const path = url.split("?")[0];
         if (!user && !publicPaths.includes(path)) {
             setAuthorized(false);
