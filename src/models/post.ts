@@ -1,14 +1,14 @@
 export interface Post {
-	_id: string;
-	name: string;
-    date: Date;
-    photoPath: string;
+	_id?: string;
+	name?: string;
+    date?: Date;
+    photoPath?: string;
     description: string;
     architect: string;
     city: string;
     subAge: string;
-    owner: string;
-    gallery: [
+    owner?: string;
+    gallery?: [
         {
             name: string,
             imagePath: string,
@@ -17,14 +17,14 @@ export interface Post {
         }
     ];
 
-    comments: [
+    comments?: [
         {
             owner: string,
             comment: string
         }
     ];
 
-    likes: [
+    likes?: [
         {
             owner: string,
             liked: boolean

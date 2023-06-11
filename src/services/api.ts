@@ -1,8 +1,9 @@
 import axios, { AxiosInstance, AxiosResponse, RawAxiosRequestHeaders } from "axios";
 import { AuthData } from "../models/auth";
-import { Filter } from "../models/filter";
+import { Filter, FilterPageSortLimit } from "../models/filterPageSort";
 import { Post } from "../models/post";
 import { User, UserLogin, UserRegister, UserResetPassword, UserValidateToken } from "../models/user";
+import { Architect } from "../models/architect";
 
 export interface ApiRequestData<T> {
 	data?: T
@@ -23,6 +24,16 @@ class Api {
 		});
 	}
 
+	private getFilteredSortedPaginated = <T>(endpoint: string, filterPageSort: FilterPageSortLimit, headers: RawAxiosRequestHeaders): Promise<AxiosResponse<T[]>> => {
+		const { filters, page, sort, limit } = filterPageSort;		
+		const url =
+            endpoint + "?page=" + page +
+            (filters.length > 0 ? "&" : "") +
+            filters.map((filter) => `filter=${filter.property},${filter.operator},${filter.value}`).join("&") + `&sort=${sort}` + `&limit=${limit}`;
+
+        return this.axiosInstance.get(url, { headers });
+	} 
+
     postRegister = async (apiRequestData: ApiRequestData<UserRegister>): Promise<AxiosResponse<User & AuthData>> => {
         return await this.axiosInstance.post<User & AuthData>("users/register", apiRequestData.data, { headers: apiRequestData.headers });
     }
@@ -39,14 +50,8 @@ class Api {
         return await this.axiosInstance.get<User>("users/current", { headers: apiRequestData.headers });
     }
 
-    getPosts = async (apiRequestData: ApiRequestData<{ filters: Filter[], page: number }>): Promise<AxiosResponse<Post[]>> => {
-        const { filters, page } = apiRequestData.data!;
-		const url =
-            "/posts?page=" + page +
-            (filters.length > 0 ? "&" : "") +
-            filters.map((filter) => `filter=${filter.property},${filter.operator},${filter.value}`).join("&");
-
-        return await this.axiosInstance.get(url, { headers: apiRequestData.headers });
+    getPosts = async (apiRequestData: ApiRequestData<FilterPageSortLimit>): Promise<AxiosResponse<Post[]>> => {
+        return await this.getFilteredSortedPaginated("/posts", apiRequestData.data!, apiRequestData.headers!);
     }
 
 	getNewAccessToken = async (apiRequestData: ApiRequestData<string>): Promise<AxiosResponse<AuthData>> => {
@@ -63,6 +68,15 @@ class Api {
 
 	resetPassword = async (apiRequestData: ApiRequestData<UserResetPassword>): Promise<AxiosResponse<string>> => {
 		return await this.axiosInstance.post<string>("users/reset-password", apiRequestData.data)
+	}
+
+    postPost = async(apiRequestData: ApiRequestData<Post>): Promise<AxiosResponse<Post>> => {
+        return await this.axiosInstance.post<Post>("/posts", apiRequestData.data, { headers: apiRequestData.headers })
+    }
+
+	getArchitects = async(apiRequestData: ApiRequestData<FilterPageSortLimit>): Promise<AxiosResponse<Architect[]>> => {
+		return await this.getFilteredSortedPaginated("/architects", apiRequestData.data!, apiRequestData.headers!);
+
 	}
 }
 

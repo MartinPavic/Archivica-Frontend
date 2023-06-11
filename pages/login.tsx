@@ -70,10 +70,6 @@ const LoginPage: NextPage = (): JSX.Element => {
                                 helperText={errors.password?.message}
                                 {...register("password", {
                                     required: "Password is required",
-                                    minLength: {
-                                        value: 8,
-                                        message: "Min length is 8.",
-                                    },
                                 })}
                             />
                             <Grid container justifyContent="flex-end">

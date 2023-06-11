@@ -5,16 +5,18 @@ import apiService from "../../services/api";
 import { Box, CircularProgress, Stack } from "@mui/material";
 import PostPreview from "../postPreview";
 import { SnackbarWrapper } from "../snackbarWrapper";
-import { Filter } from "../../models/filter";
+import { Filter } from "../../models/filterPageSort";
 import { Center } from "../center";
 
 const PostFeed = () => {
     const [filters, setFilters] = useState<Filter[]>([]);
     const [page, setPage] = useState<number>(1);
+	const [sort, setSort] = useState<"asc" | "desc">("asc");
+	const [limit, setLimit] = useState<number>(10);
     const getPostsRequest = useAuthenticatedRequest({ request: apiService.getPosts });
     const { authData } = useAuth();
     useEffect(() => {
-        if (authData) getPostsRequest.call({ filters, page });
+        if (authData) getPostsRequest.call({ filters, page, sort, limit });
     }, [filters, page, authData]);
     return (
         <SnackbarWrapper show={!!getPostsRequest.error} success={false} message={getPostsRequest.error}>

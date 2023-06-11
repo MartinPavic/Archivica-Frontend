@@ -8,7 +8,7 @@ import PostCreate from "../src/components/postCreate/postCreate";
 import style from "../src/styles/Home.module.scss";
 import { useAuthenticatedRequest } from "../src/hooks/useRequest";
 import apiService from "../src/services/api";
-import { Filter } from "../src/models/filter";
+import { Filter } from "../src/models/filterPageSort";
 import { Alert, LinearProgress, Snackbar } from "@mui/material";
 import AuthGuard from "../src/guards/authGuard";
 import useAuth from "../src/contexts/useAuth";

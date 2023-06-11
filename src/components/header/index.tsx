@@ -29,21 +29,21 @@ const Header = () => {
                             sx={{ flexGrow: 1 }}
                         >
                             <Tooltip arrow title="Home" TransitionComponent={Zoom} >
-                                <IconButton size="large" edge="start" color="primary">
+                                <IconButton size="large" edge="start" color="primary" onClick={() => router.push("/")}>
                                     <Home fontSize="large" sx={{ color: "black" }} />
                                 </IconButton>
                             </Tooltip>
-                            <Tooltip arrow title="Architects" TransitionComponent={Zoom}>
+                            <Tooltip arrow title="Architects" TransitionComponent={Zoom} onClick={() => router.push("/architects")}>
                                 <IconButton size="large" edge="start" color="primary">
                                     <Architecture fontSize="large" sx={{ color: "black" }} />
                                 </IconButton>
                             </Tooltip>
-                            <Tooltip arrow title="Styles" TransitionComponent={Zoom}>
+                            <Tooltip arrow title="Architecture Styles" TransitionComponent={Zoom} onClick={() => router.push("/architecture-style")}>
                                 <IconButton size="large" edge="start" color="primary">
                                     <Style fontSize="large" sx={{ color: "black" }} />
                                 </IconButton>
                             </Tooltip>
-                            <Tooltip arrow title="Ages" TransitionComponent={Zoom}>
+                            <Tooltip arrow title="Architecture Period" TransitionComponent={Zoom} onClick={() => router.push("/architecture-period")}>
                                 <IconButton size="large" edge="start" color="primary">
                                     <Newspaper fontSize="large" sx={{ color: "black" }} />
                                 </IconButton>

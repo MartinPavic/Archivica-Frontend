@@ -55,7 +55,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const getAuthData = useCallback((): AuthData | null => {
         try {
             const data = localStorage.getItem(constants.authKey);
-            if (data || data === null || data == "null") {
+            if (!data || data == "null") {
                 setAuthData(null);
             	setInitializing(false);
                 return null;

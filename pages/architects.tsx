@@ -1,155 +1,33 @@
-import React from "react";
-import FilterListRoundedIcon from "@mui/icons-material/FilterListRounded";
-import Button from "@mui/material/Button";
+import { Box, Container, Fab } from "@mui/material";
+import { NextPage } from "next";
+import background from "../assets/images/buildings.jpg";
+import { Close, Add } from "@mui/icons-material";
+import AddPost from "../src/components/modal/addPost";
+import ArchitectFeed from "../src/components/architectFeed/architectFeed";
+import { useState } from "react";
+import AddArchitectFormDialog from "../src/components/addArchitectFormDialog";
 
-import Sidebar from "../src/components/sidebar";
-import Table from "../src/components/table";
-import RoundSelect from "../src/components/UI/roundSelect";
-import YearFilter from "../src/components/filtering/yearFilter";
-
-import homeStyle from "../src/styles/Home.module.scss";
-import archStyle from "../src/styles/Architects.module.scss";
-import AuthGuard from "../src/guards/authGuard";
-
-const selectData = [
-    {
-        title: "Continent",
-        items: [
-            { id: 1, title: "Africa" },
-            { id: 2, title: "Asia" },
-            { id: 3, title: "Europe" },
-        ],
-    },
-    {
-        title: "Country",
-        items: [
-            { id: 1, title: "England" },
-            { id: 2, title: "Croatia" },
-            { id: 3, title: "France" },
-        ],
-    },
-    {
-        title: "City",
-        items: [
-            { id: 1, title: "Vienna" },
-            { id: 2, title: "London" },
-            { id: 3, title: "Amsterdam" },
-        ],
-    },
-    {
-        title: "Style",
-        items: [
-            { id: 1, title: "Dark Age Europe" },
-            { id: 2, title: "Modern Europe" },
-            { id: 3, title: "Post Modern Europe" },
-        ],
-    },
-    {
-        title: "Purpose",
-        items: [
-            { id: 1, title: "Military" },
-            { id: 2, title: "Presidential" },
-            { id: 3, title: "Sport" },
-        ],
-    },
-];
-
-const originalData = [
-    {
-        architect: "Álvaro Siza",
-        continent: "Africa",
-        country: "France",
-        city: "Vienna",
-        style: "Dark Age Europe",
-        purpose: "sport",
-    },
-    {
-        architect: "Antoine Predock",
-        continent: "US",
-        country: "France",
-        city: "Vienna",
-        style: "Dark Age Europe",
-        purpose: "sport",
-    },
-    {
-        architect: "Ben van Berkel",
-        continent: "NL",
-        country: "France",
-        city: "Vienna",
-        style: "Dark Age Europe",
-        purpose: "sport",
-    },
-    {
-        architect: "Bernard Tschumi",
-        continent: "CH",
-        country: "Croatia",
-        city: "Vienna",
-        style: "Dark Age Europe",
-        purpose: "sport",
-    },
-];
-
-const Architects = () => {
-    const [data, setData] = React.useState(originalData);
-    const [searchValues, setSearchValues] = React.useState({
-        architect: "",
-        continent: "",
-        country: "",
-        city: "",
-        style: "",
-        purpose: "",
-    });
-
-    const handleSelectChange = (title: string, value: string) => {
-        setSearchValues({ ...searchValues, [title]: value });
-    };
-
-    const renderSelectOptions = selectData.map((select) => (
-        <RoundSelect key={select.title} title={select.title} items={select.items} onChange={handleSelectChange} />
-    ));
-
-    const handleApply = () => {
-        const newData = originalData.filter((item) => {
-            if (
-                (searchValues.architect.toLocaleLowerCase() === item.architect.toLocaleLowerCase() ||
-                    searchValues.architect === "") &&
-                (searchValues.continent.toLocaleLowerCase() === item.continent.toLocaleLowerCase() ||
-                    searchValues.continent === "") &&
-                (searchValues.country.toLocaleLowerCase() === item.country.toLocaleLowerCase() ||
-                    searchValues.country === "") &&
-                (searchValues.city.toLocaleLowerCase() === item.city.toLocaleLowerCase() || searchValues.city === "") &&
-                (searchValues.style.toLocaleLowerCase() === item.style.toLocaleLowerCase() ||
-                    searchValues.style === "") &&
-                (searchValues.purpose.toLocaleLowerCase() === item.purpose.toLocaleLowerCase() ||
-                    searchValues.purpose === "")
-            ) {
-                return item;
-            }
-        });
-        setData(newData);
-    };
-
+const Architects: NextPage = () => {
+    const [open, setOpen] = useState(false);
     return (
-        <>
-            <div className={homeStyle.left}>
-                <Sidebar />
-            </div>
-            <div className={[homeStyle.right, archStyle.right].join(" ")}>
-                <div className={archStyle.right_wrapper}>
-                    <FilterListRoundedIcon /> Filter items
-                </div>
-                <div className={archStyle.right_select}>{renderSelectOptions}</div>
-                <div className={archStyle.right_filter}>
-                    <div className={archStyle.right_filter_year}>
-                        <YearFilter />
-                    </div>
-                    <Button variant="contained" sx={{ borderRadius: "50px" }} onClick={() => handleApply()}>
-                        Apply
-                    </Button>
-                </div>
-                <Table data={data} />
-            </div>
-        </>
+        <Box
+            className="no-scrollbar w-full h-screen flex justify-center px-12"
+            sx={{ backgroundImage: `url(${background.src})`, minHeight: "400px", backdropFilter: "blur(4.7px)" }}
+        >
+            <Container className="no-scrollbar relative overflow-y-scroll">
+                <ArchitectFeed />
+            </Container>
+            <Fab
+                className="fixed z-90 bottom-10 right-8 bg-blue-600 rounded-full drop-shadow-lg flex justify-center items-center text-white text-4xl"
+                color="primary"
+                aria-label="add"
+                sx={{ position: "fixed" }}
+                onClick={() => setOpen(!open)}
+            >
+                {open ? <Close /> : <Add />}
+            </Fab>
+			<AddArchitectFormDialog open={open} setOpen={setOpen}></AddArchitectFormDialog>
+        </Box>
     );
 };
 
