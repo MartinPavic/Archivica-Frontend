@@ -4,9 +4,14 @@ export interface Filter {
 	value: string;
 }
 
+export interface Sort {
+	property: string;
+	operator: "asc" | "desc";
+}
+
 export interface FilterPageSortLimit {
 	filters: Filter[], 
 	page: number,
-	sort: "asc" | "desc",
+	sort: Sort,
 	limit: number,
 }

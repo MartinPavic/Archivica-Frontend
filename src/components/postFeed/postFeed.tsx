@@ -5,13 +5,13 @@ import apiService from "../../services/api";
 import { Box, CircularProgress, Stack } from "@mui/material";
 import PostPreview from "../postPreview";
 import { SnackbarWrapper } from "../snackbarWrapper";
-import { Filter } from "../../models/filterPageSort";
+import { Filter, Sort } from "../../models/filterPageSort";
 import { Center } from "../center";
 
 const PostFeed = () => {
     const [filters, setFilters] = useState<Filter[]>([]);
     const [page, setPage] = useState<number>(1);
-	const [sort, setSort] = useState<"asc" | "desc">("asc");
+	const [sort, setSort] = useState<Sort>({ property: "date", operator: "asc" });
 	const [limit, setLimit] = useState<number>(10);
     const getPostsRequest = useAuthenticatedRequest({ request: apiService.getPosts });
     const { authData } = useAuth();

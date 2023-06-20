@@ -30,7 +30,7 @@ const ResetPasswordPage: NextPage = (): JSX.Element => {
 };
 
 const ResetPasswordFormOrNotFound = ({ email, token }: { email: string; token: string }): JSX.Element => {
-    const validateTokenRequest = useRequest({ request: apiService.validateToken });
+    const validateTokenRequest = useRequest({ request: apiService.postValidateToken });
 
     useEffect(() => {
         validateTokenRequest.call({ email, token });

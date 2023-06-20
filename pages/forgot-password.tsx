@@ -26,7 +26,7 @@ const ForgotPassword = () => {
 		reset
     } = useForm<{ email: string }>();
 
-    const forgotPasswordRequest = useRequest({ request: apiService.forgotPassword });
+    const forgotPasswordRequest = useRequest({ request: apiService.postForgotPassword });
 
     const onSubmit = async (values: FieldValues) => {
         if (isValid) {

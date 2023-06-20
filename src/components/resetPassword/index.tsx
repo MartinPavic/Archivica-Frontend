@@ -16,7 +16,7 @@ export const ResetPasswordForm = ({ email, token }: { email: string, token: stri
     } = useForm<UserResetPassword>();
 	
     const resetPasswordRequest = useRequest({
-        request: apiService.resetPassword,
+        request: apiService.postResetPassword,
     });
 	
 	const { signIn } = useAuth()
