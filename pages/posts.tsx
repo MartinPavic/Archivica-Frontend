@@ -8,7 +8,7 @@ import PostCreate from "../src/components/postCreate/postCreate";
 import style from "../src/styles/Home.module.scss";
 import { useAuthenticatedRequest } from "../src/hooks/useRequest";
 import apiService from "../src/services/api";
-import { Filter } from "../src/models/filterPageSort";
+import { Filter, Sort } from "../src/models/filterPageSort";
 import { Alert, LinearProgress, Snackbar } from "@mui/material";
 import AuthGuard from "../src/guards/authGuard";
 import useAuth from "../src/contexts/useAuth";
@@ -16,7 +16,9 @@ import { NextPage } from "next";
 
 const PostsPage: NextPage = (props: any) => {
     const [filters, setFilters] = useState<Filter[]>([]);
-	const [page, setPage] = useState<number>(1);
+    const [page, setPage] = useState<number>(1);
+    const [sort, setSort] = useState<Sort>({ property: "name", operator: "asc" });
+    const [limit, setLimit] = useState<number>(10);
     const getPostsRequest = useAuthenticatedRequest({ request: apiService.getPosts });
 	const { authData } = useAuth();
 	const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
@@ -25,7 +27,7 @@ const PostsPage: NextPage = (props: any) => {
         }
     };
 	useEffect(() => {
-		if (authData) getPostsRequest.call({ filters, page })
+		if (authData) getPostsRequest.call({ filters, page, sort, limit })
 	}, [filters, page, authData]);
     return (
         
