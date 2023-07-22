@@ -89,6 +89,14 @@ class Api {
 		return await this.axiosInstance.post<Architect>("/architects", apiRequestData.data!, { headers: apiRequestData.headers });
 	}
 
+	deleteArchitect = async (apiRequestData: ApiRequestData<{ id: string }>): Promise<AxiosResponse<string>> => {
+        return await this.axiosInstance.delete<string>(`/architects/${apiRequestData.data?.id}`, { headers: apiRequestData.headers });
+    }
+
+	putArchitect = async (apiRequestData: ApiRequestData<Architect>): Promise<AxiosResponse<Architect>> => {
+        return await this.axiosInstance.put<Architect>(`/architects/${apiRequestData.data?._id}`, apiRequestData.data!, { headers: apiRequestData.headers });
+    }
+
 	// COUNTRIES //
 
 	getCountries = async (apiRequestData: ApiRequestData<FilterPageSortLimit>): Promise<AxiosResponse<Country[]>> => {
