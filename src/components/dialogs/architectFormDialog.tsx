@@ -13,10 +13,6 @@ interface ArchitectFormDialogProps {
     architect?: Architect;
 }
 
-function isKey<T extends object>(x: T, k: PropertyKey): k is keyof T {
-    return k in x;
-}
-
 const ArchitectFormDialog = ({ open, setOpen, onSubmit, architect }: ArchitectFormDialogProps) => {
     const {
         register,
@@ -24,7 +20,6 @@ const ArchitectFormDialog = ({ open, setOpen, onSubmit, architect }: ArchitectFo
         // Read the formState before render to subscribe the form state through the Proxy
         formState: { errors, isValid, touchedFields },
         reset,
-        setValue,
     } = useForm<Architect>();
 
     const handleClose = (event: any, reason: "backdropClick" | "escapeKeyDown") => {

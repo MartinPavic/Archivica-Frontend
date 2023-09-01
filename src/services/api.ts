@@ -5,6 +5,7 @@ import { Post } from "../models/post";
 import { User, UserLogin, UserRegister, UserResetPassword, UserValidateToken } from "../models/user";
 import { Architect } from "../models/architect";
 import { Country } from "../models/country";
+import { ArchitectureStyle } from "../models/architectureStyle";
 
 export interface ApiRequestData<T> {
 	data?: T
@@ -102,6 +103,24 @@ class Api {
 	getCountries = async (apiRequestData: ApiRequestData<FilterPageSortLimit>): Promise<AxiosResponse<Country[]>> => {
 		return await this.getFilteredSortedPaginated("/countries", apiRequestData.data!, apiRequestData.headers!);
 	}
+
+	// ARCHITECTURE STYLES //
+
+	getArchitectureStyles = async (apiRequestData: ApiRequestData<FilterPageSortLimit>): Promise<AxiosResponse<ArchitectureStyle[]>> => {
+		return await this.getFilteredSortedPaginated("/architecture-style", apiRequestData.data!, apiRequestData.headers!);
+	}
+
+	postArchitectureStyles = async (apiRequestData: ApiRequestData<ArchitectureStyle>): Promise<AxiosResponse<ArchitectureStyle>> => {
+		return await this.axiosInstance.post<ArchitectureStyle>("/architecture-styles", apiRequestData.data!, { headers: apiRequestData.headers });
+	}
+
+	deleteArchitectureStyles = async (apiRequestData: ApiRequestData<{ id: string }>): Promise<AxiosResponse<string>> => {
+        return await this.axiosInstance.delete<string>(`/architecture-styles/${apiRequestData.data?.id}`, { headers: apiRequestData.headers });
+    }
+
+	putArchitectureStyles = async (apiRequestData: ApiRequestData<ArchitectureStyle>): Promise<AxiosResponse<ArchitectureStyle>> => {
+        return await this.axiosInstance.put<ArchitectureStyle>(`/architecture-styles/${apiRequestData.data?._id}`, apiRequestData.data!, { headers: apiRequestData.headers });
+    }
 
 }
 

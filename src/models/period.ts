@@ -1,5 +1,6 @@
-export interface Period {
-	_id: string;
+import { Model } from "./model";
+
+export interface Period extends Model {
 	name: string;
     synonym: string;
     start: {

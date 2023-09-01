@@ -1,5 +1,6 @@
-export interface Post {
-	_id?: string;
+import { Model } from "./model";
+
+export interface Post extends Model {
 	name?: string;
     date?: Date;
     photoPath?: string;

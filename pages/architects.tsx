@@ -1,4 +1,4 @@
-import { Box, CircularProgress, Container, Fab } from "@mui/material";
+import { Box, CircularProgress, Container, Fab, ListItemText } from "@mui/material";
 import { NextPage } from "next";
 import background from "../assets/images/buildings.jpg";
 import { Close, Add } from "@mui/icons-material";
@@ -10,6 +10,7 @@ import { Filter, Sort } from "../src/models/filterPageSort";
 import { SnackbarWrapper } from "../src/components/snackbarWrapper";
 import { Architect } from "../src/models/architect";
 import ArchitectFormDialog from "../src/components/dialogs/architectFormDialog";
+import { ModelList, RenderInstanceUpdateForm } from "../src/components/lists/modelList";
 
 const Architects: NextPage = () => {
     const [open, setOpen] = useState(false);
@@ -20,22 +21,22 @@ const Architects: NextPage = () => {
     const [architects, setArchitects] = useState<Architect[]>([]);
     const getArchitectsRequest = useAuthenticatedRequest({ request: apiService.getArchitects });
     const deleteArchitectRequest = useAuthenticatedRequest({ request: apiService.deleteArchitect });
-	const updateArchitectRequest = useAuthenticatedRequest({ request: apiService.putArchitect });
-	const createArchitectRequest = useAuthenticatedRequest({ request: apiService.postArchitect });
+    const updateArchitectRequest = useAuthenticatedRequest({ request: apiService.putArchitect });
+    const createArchitectRequest = useAuthenticatedRequest({ request: apiService.postArchitect });
 
     useEffect(() => {
         const getArchitects = async () => {
             const response = await getArchitectsRequest.call({ filters, sort, page, limit });
-            setArchitects(response ? response : []);
+            setArchitects(response ?? []);
         };
         getArchitects();
     }, [filters, page, sort, limit]);
 
-	const createArchitect = async (data: Architect) => {
-		const response = await createArchitectRequest.call(data);
-		if (response) setArchitects([...architects, response]);
-		setOpen(false);
-	};
+    const createArchitect = async (data: Architect) => {
+        const response = await createArchitectRequest.call(data);
+        if (response) setArchitects([...architects, response]);
+        setOpen(false);
+    };
     const deleteArchitect = async (id: string) => {
         const response = await deleteArchitectRequest.call({ id });
         if (!response) {
@@ -45,13 +46,19 @@ const Architects: NextPage = () => {
         setArchitects([...architects.slice(0, index), ...architects.slice(index + 1)]);
     };
     const updateArchitect = async (architect: Architect) => {
-		const response = await updateArchitectRequest.call(architect);
-		if (!response) {
-			return;
-		}
-		const index = architects.findIndex((arch) => arch._id === architect._id);
-		setArchitects([...architects.slice(0, index), response, ...architects.slice(index + 1)]);
-	};
+        const response = await updateArchitectRequest.call(architect);
+        if (!response) {
+            return;
+        }
+        const index = architects.findIndex((arch) => arch._id === architect._id);
+        setArchitects([...architects.slice(0, index), response, ...architects.slice(index + 1)]);
+    };
+
+    const listItemTextTitle = (architect: Architect) => `${architect.firstName} ${architect.lastName}`;
+
+    const renderArchitectUpdateForm: RenderInstanceUpdateForm<Architect> = (open, setOpen, onSubmit, architect) => {
+        return <ArchitectFormDialog open={open} setOpen={setOpen} onSubmit={onSubmit} architect={architect} />;
+    };
 
     return (
         <Box
@@ -61,10 +68,27 @@ const Architects: NextPage = () => {
             <Container className="no-scrollbar relative overflow-y-scroll">
                 {getArchitectsRequest.loading && <CircularProgress />}
                 <SnackbarWrapper
-                    show={!!getArchitectsRequest.error || !!deleteArchitectRequest.error || !!createArchitectRequest.error || !!updateArchitectRequest.error}
+                    show={
+                        !!getArchitectsRequest.error ||
+                        !!deleteArchitectRequest.error ||
+                        !!createArchitectRequest.error ||
+                        !!updateArchitectRequest.error
+                    }
                     success={false}
-                    message={getArchitectsRequest.error ?? deleteArchitectRequest.error ?? createArchitectRequest.error ?? updateArchitectRequest.error}
+                    message={
+                        getArchitectsRequest.error ??
+                        deleteArchitectRequest.error ??
+                        createArchitectRequest.error ??
+                        updateArchitectRequest.error
+                    }
                 >
+                    <ModelList<Architect>
+                        instances={architects}
+                        updateInstance={updateArchitect}
+                        deleteInstance={deleteArchitect}
+                        listItemTextTitle={listItemTextTitle}
+                        renderInstanceUpdateForm={renderArchitectUpdateForm}
+                    />
                     <ArchitectFeed
                         architects={architects}
                         deleteArchitect={deleteArchitect}
@@ -81,11 +105,7 @@ const Architects: NextPage = () => {
             >
                 {open ? <Close /> : <Add />}
             </Fab>
-            <ArchitectFormDialog
-                open={open}
-                setOpen={setOpen}
-				onSubmit={createArchitect}
-            ></ArchitectFormDialog>
+            <ArchitectFormDialog open={open} setOpen={setOpen} onSubmit={createArchitect}></ArchitectFormDialog>
         </Box>
     );
 };

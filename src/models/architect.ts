@@ -1,5 +1,6 @@
-export interface Architect {
-	_id: string;
+import { Model } from "./model";
+
+export interface Architect extends Model {
 	firstName: string;
 	lastName: string;
 	yearBorn: number;

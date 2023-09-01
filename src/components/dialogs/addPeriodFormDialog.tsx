@@ -98,7 +98,7 @@ const AddPeriodFormDialog = ({ open, setOpen }: AddPeriodFormDialogProps) => {
                         <FormControlLabel control={<Checkbox  />} label="Present" />
                     </Grid> */}
                     <Grid item xs={12}>
-                        <Button disabled={isValid} variant="outlined" type="submit">Submit</Button>
+                        <Button disabled={!isValid} variant="outlined" type="submit">Submit</Button>
                     </Grid>
                 </Grid>
             </form>
