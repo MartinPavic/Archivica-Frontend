@@ -2,7 +2,6 @@ import { Box, CircularProgress, Container, Fab, ListItemText } from "@mui/materi
 import { NextPage } from "next";
 import background from "../assets/images/buildings.jpg";
 import { Close, Add } from "@mui/icons-material";
-import ArchitectFeed from "../src/components/architectFeed/architectFeed";
 import { useEffect, useState } from "react";
 import { useAuthenticatedRequest } from "../src/hooks/useRequest";
 import apiService from "../src/services/api";
@@ -88,11 +87,6 @@ const Architects: NextPage = () => {
                         deleteInstance={deleteArchitect}
                         listItemTextTitle={listItemTextTitle}
                         renderInstanceUpdateForm={renderArchitectUpdateForm}
-                    />
-                    <ArchitectFeed
-                        architects={architects}
-                        deleteArchitect={deleteArchitect}
-                        updateArchitect={updateArchitect}
                     />
                 </SnackbarWrapper>
             </Container>

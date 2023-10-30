@@ -38,12 +38,12 @@ const Header = () => {
                                     <Architecture fontSize="large" sx={{ color: "black" }} />
                                 </IconButton>
                             </Tooltip>
-                            <Tooltip arrow title="Architecture Styles" TransitionComponent={Zoom} onClick={() => router.push("/architecture-style")}>
+                            <Tooltip arrow title="Architecture Styles" TransitionComponent={Zoom} onClick={() => router.push("/architecture-styles")}>
                                 <IconButton size="large" edge="start" color="primary">
                                     <Style fontSize="large" sx={{ color: "black" }} />
                                 </IconButton>
                             </Tooltip>
-                            <Tooltip arrow title="Architecture Period" TransitionComponent={Zoom} onClick={() => router.push("/periods")}>
+                            <Tooltip arrow title="Architecture Period" TransitionComponent={Zoom} onClick={() => router.push("/architecture-periods")}>
                                 <IconButton size="large" edge="start" color="primary">
                                     <Newspaper fontSize="large" sx={{ color: "black" }} />
                                 </IconButton>

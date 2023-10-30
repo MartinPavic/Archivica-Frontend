@@ -107,7 +107,7 @@ class Api {
 	// ARCHITECTURE STYLES //
 
 	getArchitectureStyles = async (apiRequestData: ApiRequestData<FilterPageSortLimit>): Promise<AxiosResponse<ArchitectureStyle[]>> => {
-		return await this.getFilteredSortedPaginated("/architecture-style", apiRequestData.data!, apiRequestData.headers!);
+		return await this.getFilteredSortedPaginated("/architecture-styles", apiRequestData.data!, apiRequestData.headers!);
 	}
 
 	postArchitectureStyles = async (apiRequestData: ApiRequestData<ArchitectureStyle>): Promise<AxiosResponse<ArchitectureStyle>> => {
@@ -120,6 +120,24 @@ class Api {
 
 	putArchitectureStyles = async (apiRequestData: ApiRequestData<ArchitectureStyle>): Promise<AxiosResponse<ArchitectureStyle>> => {
         return await this.axiosInstance.put<ArchitectureStyle>(`/architecture-styles/${apiRequestData.data?._id}`, apiRequestData.data!, { headers: apiRequestData.headers });
+    }
+
+	// ARCHITECTURE PERIODS //
+
+	getArchitecturePeriods = async (apiRequestData: ApiRequestData<FilterPageSortLimit>): Promise<AxiosResponse<ArchitectureStyle[]>> => {
+		return await this.getFilteredSortedPaginated("/architecture-periods", apiRequestData.data!, apiRequestData.headers!);
+	}
+
+	postArchitecturePeriods = async (apiRequestData: ApiRequestData<ArchitectureStyle>): Promise<AxiosResponse<ArchitectureStyle>> => {
+		return await this.axiosInstance.post<ArchitectureStyle>("/architecture-periods", apiRequestData.data!, { headers: apiRequestData.headers });
+	}
+
+	deleteArchitecturePeriods = async (apiRequestData: ApiRequestData<{ id: string }>): Promise<AxiosResponse<string>> => {
+        return await this.axiosInstance.delete<string>(`/architecture-periods/${apiRequestData.data?.id}`, { headers: apiRequestData.headers });
+    }
+
+	putArchitecturePeriods = async (apiRequestData: ApiRequestData<ArchitectureStyle>): Promise<AxiosResponse<ArchitectureStyle>> => {
+        return await this.axiosInstance.put<ArchitectureStyle>(`/architecture-periods/${apiRequestData.data?._id}`, apiRequestData.data!, { headers: apiRequestData.headers });
     }
 
 }

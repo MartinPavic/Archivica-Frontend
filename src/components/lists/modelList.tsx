@@ -30,8 +30,8 @@ export const ModelList = <T extends Model>({
     const [open, setOpen] = useState(false);
     const [selectedInstance, setSelectedInstance] = useState<T | undefined>(undefined);
     const openUpdateForm = (instance: T) => {
-        setOpen(true);
         setSelectedInstance(instance);
+		setOpen(true);
     };
     return (
         <>
@@ -65,7 +65,7 @@ export const ModelList = <T extends Model>({
                     </Center>
                 ))}
             </List>
-            {selectedInstance ?? renderInstanceUpdateForm(open, setOpen, updateInstance, selectedInstance!)}
+            {renderInstanceUpdateForm(open, setOpen, updateInstance, selectedInstance!)}
         </>
     );
 };

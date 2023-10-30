@@ -1,15 +1,15 @@
 import { Button, Dialog, DialogTitle, Grid, MenuItem, TextField } from "@mui/material";
 import { useFieldArray, useForm } from "react-hook-form";
-import { ArchitectureStyle } from "../../models/architectureStyle";
+import { ArchitecturePeriod } from "../../models/architecturePeriod";
 
-interface ArchitectureStyleFormDialogProps {
+interface ArchitecturePeriodFormDialogProps {
     open: boolean;
     setOpen: (value: boolean) => void;
-    onSubmit: (data: ArchitectureStyle) => void;
-    architectureStyle?: ArchitectureStyle;
+    onSubmit: (data: ArchitecturePeriod) => void;
+    architecturePeriod?: ArchitecturePeriod;
 }
 
-const ArchitectureStyleFormDialog = ({ open, setOpen, onSubmit, architectureStyle }: ArchitectureStyleFormDialogProps) => {
+const ArchitecturePeriodFormDialog = ({ open, setOpen, onSubmit, architecturePeriod }: ArchitecturePeriodFormDialogProps) => {
     const {
         control,
         register,
@@ -17,17 +17,16 @@ const ArchitectureStyleFormDialog = ({ open, setOpen, onSubmit, architectureStyl
         // Read the formState before render to subscribe the form state through the Proxy
         formState: { errors, isValid, touchedFields },
         reset,
-    } = useForm<ArchitectureStyle>({
+    } = useForm<ArchitecturePeriod>({
         defaultValues: {
-            synonyms: architectureStyle?.synonyms ?? [],
+            synonyms: architecturePeriod?.synonyms ?? []
         },
     });
-
     const { fields, append, remove } = useFieldArray({
         control,
         name: "synonyms",
     } as never);
-	
+
     const handleClose = (event: any, reason: "backdropClick" | "escapeKeyDown") => {
         reset();
 		setOpen(false);
@@ -35,7 +34,7 @@ const ArchitectureStyleFormDialog = ({ open, setOpen, onSubmit, architectureStyl
 
     return (
         <Dialog onClose={handleClose} open={open}>
-            <DialogTitle>{architectureStyle ? `Update ${architectureStyle.name}` : "Create an architecture style"}</DialogTitle>
+            <DialogTitle>{architecturePeriod ? `Update ${architecturePeriod.name}` : "Create an architecture period"}</DialogTitle>
             <form className="m-4" onSubmit={handleSubmit(onSubmit)}>
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
@@ -45,7 +44,7 @@ const ArchitectureStyleFormDialog = ({ open, setOpen, onSubmit, architectureStyl
                             id="name"
                             label="Name"
                             autoFocus
-                            value={architectureStyle?.name}
+                            value={architecturePeriod?.name}
                             error={touchedFields.name && !!errors.name}
                             helperText={errors.name?.message}
                             {...register("name", {
@@ -62,7 +61,7 @@ const ArchitectureStyleFormDialog = ({ open, setOpen, onSubmit, architectureStyl
                                     fullWidth
                                     id={`synonym${index}`}
                                     label={`Synonym ${index + 1}`}
-                                    value={architectureStyle?.synonyms[index]}
+                                    value={architecturePeriod?.synonyms[index]}
                                     error={touchedFields.synonyms && !!errors.synonyms}
                                     helperText={errors.synonyms?.message}
                                     {...register(`synonyms.${index}`, {
@@ -83,7 +82,7 @@ const ArchitectureStyleFormDialog = ({ open, setOpen, onSubmit, architectureStyl
                             fullWidth
                             id="start"
                             label="Start"
-                            value={architectureStyle?.start.year}
+                            value={architecturePeriod?.start.year}
                             error={touchedFields.start && !!errors.start}
                             helperText={errors.start?.message}
                             {...register("start.year", {
@@ -98,7 +97,7 @@ const ArchitectureStyleFormDialog = ({ open, setOpen, onSubmit, architectureStyl
 							select
                             id="startUnit"
                             label="Start Unit"
-                            value={architectureStyle?.start.unit}
+                            value={architecturePeriod?.start.unit}
                             error={touchedFields.start && !!errors.start}
                             helperText={errors.start?.message}
                             {...register("start.unit", {
@@ -116,7 +115,7 @@ const ArchitectureStyleFormDialog = ({ open, setOpen, onSubmit, architectureStyl
                             type="number"
                             id="end"
                             label="End"
-                            value={architectureStyle?.end.year}
+                            value={architecturePeriod?.end.year}
                             error={touchedFields.end && !!errors.end}
                             helperText={errors.end?.message}
                             {...register("end.year", {
@@ -130,7 +129,7 @@ const ArchitectureStyleFormDialog = ({ open, setOpen, onSubmit, architectureStyl
 							select
                             id="endUnit"
                             label="End Unit"
-                            value={architectureStyle?.end.unit}
+                            value={architecturePeriod?.end.unit}
                             error={touchedFields.end && !!errors.end}
                             helperText={errors.end?.message}
                             {...register("end.unit", {
@@ -153,4 +152,4 @@ const ArchitectureStyleFormDialog = ({ open, setOpen, onSubmit, architectureStyl
     );
 };
 
-export default ArchitectureStyleFormDialog;
+export default ArchitecturePeriodFormDialog;

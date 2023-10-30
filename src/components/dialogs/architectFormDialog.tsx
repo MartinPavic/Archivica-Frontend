@@ -2,9 +2,6 @@ import { Button, Dialog, DialogTitle, Grid, MenuItem, TextField } from "@mui/mat
 import { useForm } from "react-hook-form";
 import { Architect } from "../../models/architect";
 import { useCountries } from "../../hooks/useCountries";
-import { useAuthenticatedRequest } from "../../hooks/useRequest";
-import apiService from "../../services/api";
-import { SnackbarWrapper } from "../snackbarWrapper";
 
 interface ArchitectFormDialogProps {
     open: boolean;
@@ -31,7 +28,7 @@ const ArchitectFormDialog = ({ open, setOpen, onSubmit, architect }: ArchitectFo
 
     return (
         <Dialog onClose={handleClose} open={open}>
-            <DialogTitle>Create an architect</DialogTitle>
+            <DialogTitle>{architect ? `Update ${architect.firstName} ${architect.lastName}` : "Create an architect"}</DialogTitle>
             <form className="m-4" onSubmit={handleSubmit(onSubmit)}>
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
@@ -110,7 +107,7 @@ const ArchitectFormDialog = ({ open, setOpen, onSubmit, architect }: ArchitectFo
                             })}
                         >
                             {countries.map((country) => (
-                                <MenuItem key={country._id} value={country._id}>
+                                <MenuItem key={country.id} value={country.id}>
                                     {country.name}
                                 </MenuItem>
                             ))}

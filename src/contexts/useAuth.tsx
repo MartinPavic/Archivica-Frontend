@@ -72,6 +72,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     const logIn = useCallback((userAndAuthData: User & AuthData) => {
         const user: User = {
+			_id: userAndAuthData._id,
             email: userAndAuthData.email,
             firstName: userAndAuthData.firstName,
             lastName: userAndAuthData.lastName,
