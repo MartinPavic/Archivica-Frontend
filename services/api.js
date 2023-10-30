@@ -8,6 +8,7 @@ const publicInstance = axios.create({
   baseURL: apiUrl,
 })
 
+
 publicInstance.defaults.headers.Accept = 'application/json'
 publicInstance.defaults.headers['Content-Type'] = 'application/json'
 publicInstance.defaults.headers['Access-Control-Allow-Origin'] = '*'
