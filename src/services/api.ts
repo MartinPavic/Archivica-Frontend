@@ -6,6 +6,7 @@ import { User, UserLogin, UserRegister, UserResetPassword, UserValidateToken } f
 import { Architect } from "../models/architect";
 import { Country } from "../models/country";
 import { ArchitectureStyle } from "../models/architectureStyle";
+import { ArchitecturePeriod } from "../models/architecturePeriod";
 
 export interface ApiRequestData<T> {
 	data?: T
@@ -124,20 +125,20 @@ class Api {
 
 	// ARCHITECTURE PERIODS //
 
-	getArchitecturePeriods = async (apiRequestData: ApiRequestData<FilterPageSortLimit>): Promise<AxiosResponse<ArchitectureStyle[]>> => {
+	getArchitecturePeriods = async (apiRequestData: ApiRequestData<FilterPageSortLimit>): Promise<AxiosResponse<ArchitecturePeriod[]>> => {
 		return await this.getFilteredSortedPaginated("/architecture-periods", apiRequestData.data!, apiRequestData.headers!);
 	}
 
-	postArchitecturePeriods = async (apiRequestData: ApiRequestData<ArchitectureStyle>): Promise<AxiosResponse<ArchitectureStyle>> => {
-		return await this.axiosInstance.post<ArchitectureStyle>("/architecture-periods", apiRequestData.data!, { headers: apiRequestData.headers });
+	postArchitecturePeriods = async (apiRequestData: ApiRequestData<ArchitecturePeriod>): Promise<AxiosResponse<ArchitecturePeriod>> => {
+		return await this.axiosInstance.post<ArchitecturePeriod>("/architecture-periods", apiRequestData.data!, { headers: apiRequestData.headers });
 	}
 
 	deleteArchitecturePeriods = async (apiRequestData: ApiRequestData<{ id: string }>): Promise<AxiosResponse<string>> => {
         return await this.axiosInstance.delete<string>(`/architecture-periods/${apiRequestData.data?.id}`, { headers: apiRequestData.headers });
     }
 
-	putArchitecturePeriods = async (apiRequestData: ApiRequestData<ArchitectureStyle>): Promise<AxiosResponse<ArchitectureStyle>> => {
-        return await this.axiosInstance.put<ArchitectureStyle>(`/architecture-periods/${apiRequestData.data?._id}`, apiRequestData.data!, { headers: apiRequestData.headers });
+	putArchitecturePeriods = async (apiRequestData: ApiRequestData<ArchitecturePeriod>): Promise<AxiosResponse<ArchitecturePeriod>> => {
+        return await this.axiosInstance.put<ArchitecturePeriod>(`/architecture-periods/${apiRequestData.data?._id}`, apiRequestData.data!, { headers: apiRequestData.headers });
     }
 
 }

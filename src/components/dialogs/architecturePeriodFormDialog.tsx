@@ -1,6 +1,7 @@
 import { Button, Dialog, DialogTitle, Grid, MenuItem, TextField } from "@mui/material";
 import { useFieldArray, useForm } from "react-hook-form";
 import { ArchitecturePeriod } from "../../models/architecturePeriod";
+import { useEffect } from "react";
 
 interface ArchitecturePeriodFormDialogProps {
     open: boolean;
@@ -17,19 +18,21 @@ const ArchitecturePeriodFormDialog = ({ open, setOpen, onSubmit, architecturePer
         // Read the formState before render to subscribe the form state through the Proxy
         formState: { errors, isValid, touchedFields },
         reset,
-    } = useForm<ArchitecturePeriod>({
-        defaultValues: {
-            synonyms: architecturePeriod?.synonyms ?? []
-        },
-    });
+		setValue
+    } = useForm<ArchitecturePeriod>();
     const { fields, append, remove } = useFieldArray({
         control,
         name: "synonyms",
-    } as never);
+	} as any);
 
-    const handleClose = (event: any, reason: "backdropClick" | "escapeKeyDown") => {
-        reset();
+	useEffect(() => {
+		architecturePeriod?.synonyms.forEach((synonym) => append(synonym))
+		if (architecturePeriod) setValue("_id", architecturePeriod._id);
+	}, [architecturePeriod?._id])
+
+    const handleClose = (event: any, reason: "backdropClick" | "escapeKeyDown" | "submitted") => {
 		setOpen(false);
+		reset();
     };
 
     return (
@@ -61,7 +64,6 @@ const ArchitecturePeriodFormDialog = ({ open, setOpen, onSubmit, architecturePer
                                     fullWidth
                                     id={`synonym${index}`}
                                     label={`Synonym ${index + 1}`}
-                                    value={architecturePeriod?.synonyms[index]}
                                     error={touchedFields.synonyms && !!errors.synonyms}
                                     helperText={errors.synonyms?.message}
                                     {...register(`synonyms.${index}`, {

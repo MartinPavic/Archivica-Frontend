@@ -1,6 +1,7 @@
 import { Button, Dialog, DialogTitle, Grid, MenuItem, TextField } from "@mui/material";
 import { useFieldArray, useForm } from "react-hook-form";
 import { ArchitectureStyle } from "../../models/architectureStyle";
+import { useEffect } from "react";
 
 interface ArchitectureStyleFormDialogProps {
     open: boolean;
@@ -9,7 +10,12 @@ interface ArchitectureStyleFormDialogProps {
     architectureStyle?: ArchitectureStyle;
 }
 
-const ArchitectureStyleFormDialog = ({ open, setOpen, onSubmit, architectureStyle }: ArchitectureStyleFormDialogProps) => {
+const ArchitectureStyleFormDialog = ({
+    open,
+    setOpen,
+    onSubmit,
+    architectureStyle,
+}: ArchitectureStyleFormDialogProps) => {
     const {
         control,
         register,
@@ -17,25 +23,29 @@ const ArchitectureStyleFormDialog = ({ open, setOpen, onSubmit, architectureStyl
         // Read the formState before render to subscribe the form state through the Proxy
         formState: { errors, isValid, touchedFields },
         reset,
-    } = useForm<ArchitectureStyle>({
-        defaultValues: {
-            synonyms: architectureStyle?.synonyms ?? [],
-        },
-    });
+		setValue
+    } = useForm<ArchitectureStyle>();
 
     const { fields, append, remove } = useFieldArray({
         control,
         name: "synonyms",
     } as never);
-	
+
+    useEffect(() => {
+        architectureStyle?.synonyms.forEach((synonym) => append(synonym));
+		if (architectureStyle) setValue("_id", architectureStyle._id);
+    }, [architectureStyle?._id]);
+
     const handleClose = (event: any, reason: "backdropClick" | "escapeKeyDown") => {
+        setOpen(false);
         reset();
-		setOpen(false);
     };
 
     return (
         <Dialog onClose={handleClose} open={open}>
-            <DialogTitle>{architectureStyle ? `Update ${architectureStyle.name}` : "Create an architecture style"}</DialogTitle>
+            <DialogTitle>
+                {architectureStyle ? `Update ${architectureStyle.name}` : "Create an architecture style"}
+            </DialogTitle>
             <form className="m-4" onSubmit={handleSubmit(onSubmit)}>
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
@@ -69,13 +79,13 @@ const ArchitectureStyleFormDialog = ({ open, setOpen, onSubmit, architectureStyl
                                         minLength: 2,
                                     })}
                                 />
-								<Button onClick={() => remove(index)}>Delete</Button>
+                                <Button onClick={() => remove(index)}>Delete</Button>
                             </Grid>
                         );
                     })}
-					<Grid item xs={12}>
-						<Button onClick={() => append("")}>Add synonym</Button>
-					</Grid>
+                    <Grid item xs={12}>
+                        <Button onClick={() => append("")}>Add synonym</Button>
+                    </Grid>
                     <Grid item xs={12} sm={6}>
                         <TextField
                             required
@@ -89,13 +99,13 @@ const ArchitectureStyleFormDialog = ({ open, setOpen, onSubmit, architectureStyl
                             {...register("start.year", {
                                 required: "Start year is required",
                                 maxLength: 4,
-								min: 0
+                                min: 0,
                             })}
                         />
-						<TextField
+                        <TextField
                             required
                             fullWidth
-							select
+                            select
                             id="startUnit"
                             label="Start Unit"
                             value={architectureStyle?.start.unit}
@@ -105,10 +115,9 @@ const ArchitectureStyleFormDialog = ({ open, setOpen, onSubmit, architectureStyl
                                 required: "Start unit is required",
                             })}
                         >
-							<MenuItem value="AD">AD</MenuItem>
-							<MenuItem value="BC">BC</MenuItem>
-						</TextField>
-
+                            <MenuItem value="AD">AD</MenuItem>
+                            <MenuItem value="BC">BC</MenuItem>
+                        </TextField>
                     </Grid>
                     <Grid item xs={12} sm={6}>
                         <TextField
@@ -121,13 +130,13 @@ const ArchitectureStyleFormDialog = ({ open, setOpen, onSubmit, architectureStyl
                             helperText={errors.end?.message}
                             {...register("end.year", {
                                 maxLength: 4,
-								min: 0
+                                min: 0,
                             })}
                         />
-						<TextField
+                        <TextField
                             required
                             fullWidth
-							select
+                            select
                             id="endUnit"
                             label="End Unit"
                             value={architectureStyle?.end.unit}
@@ -137,10 +146,9 @@ const ArchitectureStyleFormDialog = ({ open, setOpen, onSubmit, architectureStyl
                                 required: "End unit is required",
                             })}
                         >
-							<MenuItem value="AD">AD</MenuItem>
-							<MenuItem value="BC">BC</MenuItem>
-						</TextField>
-
+                            <MenuItem value="AD">AD</MenuItem>
+                            <MenuItem value="BC">BC</MenuItem>
+                        </TextField>
                     </Grid>
                     <Grid item xs={12}>
                         <Button disabled={!isValid} variant="outlined" type="submit">
