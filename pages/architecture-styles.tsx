@@ -11,7 +11,11 @@ import { ArchitectureStyle } from "../src/models/architectureStyle";
 import { ModelList, RenderInstanceUpdateForm } from "../src/components/lists/modelList";
 import ArchitectureStyleFormDialog from "../src/components/dialogs/architectureStyleFormDialog";
 
-const ArchitectureStyles: NextPage = () => {
+interface ArchitectureStylesProps {
+    isAdminPage: boolean;
+}
+
+const ArchitectureStyles: NextPage<ArchitectureStylesProps> = ({ isAdminPage }) => {
     const [open, setOpen] = useState(false);
     const [filters, setFilters] = useState<Filter[]>([]);
     const [page, setPage] = useState<number>(1);
@@ -76,7 +80,11 @@ const ArchitectureStyles: NextPage = () => {
     return (
         <Box
             className="no-scrollbar w-full h-screen flex justify-center px-12"
-            sx={{ backgroundImage: `url(${background.src})`, minHeight: "400px", backdropFilter: "blur(4.7px)" }}
+            sx={
+                isAdminPage
+                    ? {}
+                    : { backgroundImage: `url(${background.src})`, minHeight: "400px", backdropFilter: "blur(4.7px)" }
+            }
         >
             <Container className="no-scrollbar relative overflow-y-scroll">
                 {getArchitectureStylesRequest.loading && <CircularProgress />}
@@ -101,18 +109,21 @@ const ArchitectureStyles: NextPage = () => {
                         deleteInstance={deleteArchitectureStyle}
                         listItemTextTitle={listItemTextTitle}
                         renderInstanceUpdateForm={renderArchitectUpdateForm}
+                        isAdminPage={isAdminPage}
                     />
                 </SnackbarWrapper>
             </Container>
-            <Fab
-                className="fixed z-90 bottom-10 right-8 bg-blue-600 rounded-full drop-shadow-lg flex justify-center items-center text-white text-4xl"
-                color="primary"
-                aria-label="add"
-                sx={{ position: "fixed" }}
-                onClick={() => setOpen(!open)}
-            >
-                {open ? <Close /> : <Add />}
-            </Fab>
+            {isAdminPage && (
+                <Fab
+                    className="fixed z-90 bottom-10 right-8 bg-blue-600 rounded-full drop-shadow-lg flex justify-center items-center text-white text-4xl"
+                    color="primary"
+                    aria-label="add"
+                    sx={{ position: "fixed" }}
+                    onClick={() => setOpen(!open)}
+                >
+                    {open ? <Close /> : <Add />}
+                </Fab>
+            )}
 
             <ArchitectureStyleFormDialog
                 open={open}

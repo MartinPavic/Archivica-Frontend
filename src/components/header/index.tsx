@@ -1,5 +1,5 @@
 import { AppBar, Toolbar, IconButton, Typography, Stack, Tooltip, Zoom } from "@mui/material";
-import { AccountCircle, Architecture, Home, Newspaper, Settings, Style } from "@mui/icons-material";
+import {Architecture, Home, Newspaper, Settings, Style, AdminPanelSettings } from "@mui/icons-material";
 import useAuth from "../../contexts/useAuth";
 import { useRouter } from "next/router";
 import Image from "next/image";
@@ -46,6 +46,11 @@ const Header = () => {
                             <Tooltip arrow title="Architecture Period" TransitionComponent={Zoom} onClick={() => router.push("/architecture-periods")}>
                                 <IconButton size="large" edge="start" color="primary">
                                     <Newspaper fontSize="large" sx={{ color: "black" }} />
+                                </IconButton>
+                            </Tooltip>
+                            <Tooltip arrow title="Admin panel" TransitionComponent={Zoom} onClick={() => router.push("/admin")}>
+                                <IconButton size="large" edge="start" color="primary">
+                                    <AdminPanelSettings fontSize="large" sx={{ color: "black" }} />
                                 </IconButton>
                             </Tooltip>
                         </Stack>

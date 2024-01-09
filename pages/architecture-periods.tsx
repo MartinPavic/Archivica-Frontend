@@ -11,7 +11,11 @@ import { ArchitecturePeriod } from "../src/models/architecturePeriod";
 import { ModelList, RenderInstanceUpdateForm } from "../src/components/lists/modelList";
 import ArchitecturePeriodFormDialog from "../src/components/dialogs/architecturePeriodFormDialog";
 
-const ArchitecturePeriods: NextPage = () => {
+interface ArchitecturePeriodsProps {
+    isAdminPage: boolean;
+}
+
+const ArchitecturePeriods: NextPage<ArchitecturePeriodsProps> = ({ isAdminPage }) => {
     const [open, setOpen] = useState(false);
     const [filters, setFilters] = useState<Filter[]>([]);
     const [page, setPage] = useState<number>(1);
@@ -76,7 +80,11 @@ const ArchitecturePeriods: NextPage = () => {
     return (
         <Box
             className="no-scrollbar w-full h-screen flex justify-center px-12"
-            sx={{ backgroundImage: `url(${background.src})`, minHeight: "400px", backdropFilter: "blur(4.7px)" }}
+            sx={
+                isAdminPage
+                    ? {}
+                    : { backgroundImage: `url(${background.src})`, minHeight: "400px", backdropFilter: "blur(4.7px)" }
+            }
         >
             <Container className="no-scrollbar relative overflow-y-scroll">
                 {getArchitecturePeriodsRequest.loading && <CircularProgress />}
@@ -101,9 +109,11 @@ const ArchitecturePeriods: NextPage = () => {
                         deleteInstance={deleteArchitecturePeriod}
                         listItemTextTitle={listItemTextTitle}
                         renderInstanceUpdateForm={renderArchitectUpdateForm}
+                        isAdminPage={isAdminPage}
                     />
                 </SnackbarWrapper>
             </Container>
+            {isAdminPage && 
             <Fab
                 className="fixed z-90 bottom-10 right-8 bg-blue-600 rounded-full drop-shadow-lg flex justify-center items-center text-white text-4xl"
                 color="primary"
@@ -111,8 +121,10 @@ const ArchitecturePeriods: NextPage = () => {
                 sx={{ position: "fixed" }}
                 onClick={() => setOpen(!open)}
             >
-                {open ? <Close /> : <Add />}
+                (open ? <Close /> : <Add />)
             </Fab>
+            
+            }
 
             <ArchitecturePeriodFormDialog
                 open={open}

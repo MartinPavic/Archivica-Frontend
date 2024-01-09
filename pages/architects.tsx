@@ -11,7 +11,11 @@ import { Architect } from "../src/models/architect";
 import ArchitectFormDialog from "../src/components/dialogs/architectFormDialog";
 import { ModelList, RenderInstanceUpdateForm } from "../src/components/lists/modelList";
 
-const Architects: NextPage = () => {
+interface ArchitectsProps {
+    isAdminPage: boolean;
+}
+
+const Architects: NextPage<ArchitectsProps> = ({ isAdminPage }) => {
     const [open, setOpen] = useState(false);
     const [filters, setFilters] = useState<Filter[]>([]);
     const [page, setPage] = useState<number>(1);
@@ -62,7 +66,11 @@ const Architects: NextPage = () => {
     return (
         <Box
             className="no-scrollbar w-full h-screen flex justify-center px-12"
-            sx={{ backgroundImage: `url(${background.src})`, minHeight: "400px", backdropFilter: "blur(4.7px)" }}
+            sx={
+                isAdminPage
+                    ? {}
+                    : { backgroundImage: `url(${background.src})`, minHeight: "400px", backdropFilter: "blur(4.7px)" }
+            }
         >
             <Container className="no-scrollbar relative overflow-y-scroll">
                 {getArchitectsRequest.loading && <CircularProgress />}
@@ -87,18 +95,21 @@ const Architects: NextPage = () => {
                         deleteInstance={deleteArchitect}
                         listItemTextTitle={listItemTextTitle}
                         renderInstanceUpdateForm={renderArchitectUpdateForm}
+                        isAdminPage={isAdminPage}
                     />
                 </SnackbarWrapper>
             </Container>
-            <Fab
-                className="fixed z-90 bottom-10 right-8 bg-blue-600 rounded-full drop-shadow-lg flex justify-center items-center text-white text-4xl"
-                color="primary"
-                aria-label="add"
-                sx={{ position: "fixed" }}
-                onClick={() => setOpen(!open)}
-            >
-                {open ? <Close /> : <Add />}
-            </Fab>
+            {isAdminPage && (
+                <Fab
+                    className="fixed z-90 bottom-10 right-8 bg-blue-600 rounded-full drop-shadow-lg flex justify-center items-center text-white text-4xl"
+                    color="primary"
+                    aria-label="add"
+                    sx={{ position: "fixed" }}
+                    onClick={() => setOpen(!open)}
+                >
+                    {isAdminPage && (open ? <Close /> : <Add />)}
+                </Fab>
+            )}
             <ArchitectFormDialog open={open} setOpen={setOpen} onSubmit={createArchitect}></ArchitectFormDialog>
         </Box>
     );
