@@ -23,7 +23,7 @@ const ArchitectureStyleFormDialog = ({
         // Read the formState before render to subscribe the form state through the Proxy
         formState: { errors, isValid, touchedFields },
         reset,
-		setValue
+        setValue,
     } = useForm<ArchitectureStyle>();
 
     const { fields, append, remove } = useFieldArray({
@@ -33,7 +33,7 @@ const ArchitectureStyleFormDialog = ({
 
     useEffect(() => {
         architectureStyle?.synonyms.forEach((synonym) => append(synonym));
-		if (architectureStyle) setValue("_id", architectureStyle._id);
+        if (architectureStyle) setValue("_id", architectureStyle._id);
     }, [architectureStyle?._id]);
 
     const handleClose = (event: any, reason: "backdropClick" | "escapeKeyDown") => {
@@ -55,7 +55,7 @@ const ArchitectureStyleFormDialog = ({
                             id="name"
                             label="Name"
                             autoFocus
-                            value={architectureStyle?.name}
+                            defaultValue={architectureStyle?.name}
                             error={touchedFields.name && !!errors.name}
                             helperText={errors.name?.message}
                             {...register("name", {
@@ -72,7 +72,7 @@ const ArchitectureStyleFormDialog = ({
                                     fullWidth
                                     id={`synonym${index}`}
                                     label={`Synonym ${index + 1}`}
-                                    value={architectureStyle?.synonyms[index]}
+                                    defaultValue={architectureStyle?.synonyms[index]}
                                     error={touchedFields.synonyms && !!errors.synonyms}
                                     helperText={errors.synonyms?.message}
                                     {...register(`synonyms.${index}`, {
@@ -93,7 +93,7 @@ const ArchitectureStyleFormDialog = ({
                             fullWidth
                             id="start"
                             label="Start"
-                            value={architectureStyle?.start.year}
+                            defaultValue={architectureStyle?.start.year}
                             error={touchedFields.start && !!errors.start}
                             helperText={errors.start?.message}
                             {...register("start.year", {
@@ -108,7 +108,7 @@ const ArchitectureStyleFormDialog = ({
                             select
                             id="startUnit"
                             label="Start Unit"
-                            value={architectureStyle?.start.unit}
+                            defaultValue={architectureStyle?.start.unit}
                             error={touchedFields.start && !!errors.start}
                             helperText={errors.start?.message}
                             {...register("start.unit", {
@@ -125,7 +125,7 @@ const ArchitectureStyleFormDialog = ({
                             type="number"
                             id="end"
                             label="End"
-                            value={architectureStyle?.end.year}
+                            defaultValue={architectureStyle?.end.year}
                             error={touchedFields.end && !!errors.end}
                             helperText={errors.end?.message}
                             {...register("end.year", {
@@ -139,7 +139,7 @@ const ArchitectureStyleFormDialog = ({
                             select
                             id="endUnit"
                             label="End Unit"
-                            value={architectureStyle?.end.unit}
+                            defaultValue={architectureStyle?.end.unit}
                             error={touchedFields.end && !!errors.end}
                             helperText={errors.end?.message}
                             {...register("end.unit", {
