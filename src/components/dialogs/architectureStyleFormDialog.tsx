@@ -125,7 +125,7 @@ const ArchitectureStyleFormDialog = ({
                             type="number"
                             id="end"
                             label="End"
-                            value={architectureStyle?.end.year}
+                            value={architectureStyle?.end?.year}
                             error={touchedFields.end && !!errors.end}
                             helperText={errors.end?.message}
                             {...register("end.year", {
@@ -139,7 +139,7 @@ const ArchitectureStyleFormDialog = ({
                             select
                             id="endUnit"
                             label="End Unit"
-                            value={architectureStyle?.end.unit}
+                            value={architectureStyle?.end?.unit}
                             error={touchedFields.end && !!errors.end}
                             helperText={errors.end?.message}
                             {...register("end.unit", {

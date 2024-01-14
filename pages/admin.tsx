@@ -25,7 +25,7 @@ function CustomTabPanel(props: TabPanelProps) {
             {...other}
         >
             {value === index && (
-                <Box sx={{ p: 3 }}>
+                <Box>
                     <Typography>{children}</Typography>
                 </Box>
             )}
@@ -51,7 +51,7 @@ const Admin: NextPage = () => {
             sx={{ backgroundImage: `url(${background.src})`, minHeight: "400px", backdropFilter: "blur(4.7px)" }}
         >
             <Container className="no-scrollbar relative top-16 overflow-y-scroll">
-                <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+                <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" centered >
                     <Tab label="Architects" {...a11yProps(0)} />
                     <Tab label="Styles" {...a11yProps(1)} />
                     <Tab label="Periods" {...a11yProps(2)} />

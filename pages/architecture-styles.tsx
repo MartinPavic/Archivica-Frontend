@@ -8,7 +8,7 @@ import apiService from "../src/services/api";
 import { Filter, Sort } from "../src/models/filterPageSort";
 import { SnackbarWrapper } from "../src/components/snackbarWrapper";
 import { ArchitectureStyle } from "../src/models/architectureStyle";
-import { ModelList, RenderInstanceUpdateForm } from "../src/components/lists/modelList";
+import { Column, ModelList, RenderInstanceUpdateForm } from "../src/components/lists/modelList";
 import ArchitectureStyleFormDialog from "../src/components/dialogs/architectureStyleFormDialog";
 
 interface ArchitectureStylesProps {
@@ -21,6 +21,12 @@ const ArchitectureStyles: NextPage<ArchitectureStylesProps> = ({ isAdminPage }) 
     const [page, setPage] = useState<number>(1);
     const [sort, setSort] = useState<Sort>({ property: "name", operator: "asc" });
     const [limit, setLimit] = useState<number>(10);
+    const columns: Column[] = [
+        { label: "Name", key: (instance) => listItemTextTitle(instance) },
+        { label: "Synonms", key: "synonms"},
+        { label: "Start", key: (instance) => startYearWithEra(instance) },
+        { label: "End", key: (instance) => endYearWithEra(instance) }
+      ];
     const [architectureStyles, setArchitectureStyles] = useState<ArchitectureStyle[]>([]);
     const getArchitectureStylesRequest = useAuthenticatedRequest({ request: apiService.getArchitectureStyles });
     const deleteArchitectureStylesRequest = useAuthenticatedRequest({ request: apiService.deleteArchitectureStyles });
@@ -61,6 +67,8 @@ const ArchitectureStyles: NextPage<ArchitectureStylesProps> = ({ isAdminPage }) 
         ]);
     };
     const listItemTextTitle = (architectureStyle: ArchitectureStyle) => architectureStyle.name;
+    const startYearWithEra = (architectureStyle: ArchitectureStyle) => `${architectureStyle?.start?.year} ${architectureStyle?.start?.unit}`;
+    const endYearWithEra = (architectureStyle: ArchitectureStyle) => `${architectureStyle?.end?.year} ${architectureStyle?.end?.unit}`;
 
     const renderArchitectUpdateForm: RenderInstanceUpdateForm<ArchitectureStyle> = (
         open,
@@ -110,6 +118,7 @@ const ArchitectureStyles: NextPage<ArchitectureStylesProps> = ({ isAdminPage }) 
                         listItemTextTitle={listItemTextTitle}
                         renderInstanceUpdateForm={renderArchitectUpdateForm}
                         isAdminPage={isAdminPage}
+                        columns={columns}
                     />
                 </SnackbarWrapper>
             </Container>

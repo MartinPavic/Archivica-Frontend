@@ -9,7 +9,9 @@ import { Filter, Sort } from "../src/models/filterPageSort";
 import { SnackbarWrapper } from "../src/components/snackbarWrapper";
 import { Architect } from "../src/models/architect";
 import ArchitectFormDialog from "../src/components/dialogs/architectFormDialog";
-import { ModelList, RenderInstanceUpdateForm } from "../src/components/lists/modelList";
+import { Column, ModelList, RenderInstanceUpdateForm } from "../src/components/lists/modelList";
+import { useCountries } from "../src/hooks/useCountries";
+import { Country } from "../src/models/country";
 
 interface ArchitectsProps {
     isAdminPage: boolean;
@@ -22,10 +24,18 @@ const Architects: NextPage<ArchitectsProps> = ({ isAdminPage }) => {
     const [sort, setSort] = useState<Sort>({ property: "name", operator: "asc" });
     const [limit, setLimit] = useState<number>(10);
     const [architects, setArchitects] = useState<Architect[]>([]);
+    const columns: Column[] = [
+        { label: "Name", key: (instance) => listItemTextTitle(instance) },
+        { label: "Country", key: (instance) => findCountry(instance)?.name },
+        { label: "Year Born", key: "yearBorn" },
+        { label: "Year Died", key: "yearDied" }
+      ];
     const getArchitectsRequest = useAuthenticatedRequest({ request: apiService.getArchitects });
     const deleteArchitectRequest = useAuthenticatedRequest({ request: apiService.deleteArchitect });
     const updateArchitectRequest = useAuthenticatedRequest({ request: apiService.putArchitect });
     const createArchitectRequest = useAuthenticatedRequest({ request: apiService.postArchitect });
+    const countries: Country[] = useCountries()
+    const findCountry = (instance: Architect) => countries?.find(country => country.id === instance.countryId)
 
     useEffect(() => {
         const getArchitects = async () => {
@@ -96,6 +106,7 @@ const Architects: NextPage<ArchitectsProps> = ({ isAdminPage }) => {
                         listItemTextTitle={listItemTextTitle}
                         renderInstanceUpdateForm={renderArchitectUpdateForm}
                         isAdminPage={isAdminPage}
+                        columns={columns}
                     />
                 </SnackbarWrapper>
             </Container>

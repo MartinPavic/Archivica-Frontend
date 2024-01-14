@@ -1,15 +1,8 @@
-import {
-    ListItemButton,
-    Paper,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableRow,
-} from "@mui/material";
+import { ListItemButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { Dispatch, SetStateAction, useState } from "react";
 import { Model } from "../../models/model";
 import { Edit, Delete } from "@mui/icons-material";
+import { useCountries } from "../../hooks/useCountries";
 
 export type RenderInstanceUpdateForm<T> = (
     open: boolean,
@@ -17,6 +10,11 @@ export type RenderInstanceUpdateForm<T> = (
     onSubmit: (instance: T) => Promise<void>,
     instance: T
 ) => JSX.Element;
+
+export interface Column {
+    label: string;
+    key: string | ((instance: any) => React.ReactNode);
+}
 
 export interface ModelListProps<T extends Model> {
     instances: T[] | null;
@@ -26,6 +24,7 @@ export interface ModelListProps<T extends Model> {
     listItemTextTitle: (instance: T) => string;
     renderInstanceUpdateForm: RenderInstanceUpdateForm<T>;
     isAdminPage: boolean;
+    columns: Column[];
 }
 
 export const ModelList = <T extends Model>({
@@ -35,6 +34,7 @@ export const ModelList = <T extends Model>({
     listItemTextTitle,
     renderInstanceUpdateForm,
     isAdminPage,
+    columns,
 }: ModelListProps<T>): JSX.Element => {
     const [open, setOpen] = useState(false);
     const [selectedInstance, setSelectedInstance] = useState<T | undefined>(undefined);
@@ -42,14 +42,26 @@ export const ModelList = <T extends Model>({
         setSelectedInstance(instance);
         setOpen(true);
     };
+    const countries = useCountries();
     return (
         <>
             <TableContainer className="relative top-16" component={Paper}>
-                <Table>
+                <Table size="small" aria-label="a dense table">
+                    <TableHead>
+                        <TableRow>
+                            {columns.map((column) => (
+                                <TableCell key={column.label}>{column.label}</TableCell>
+                            ))}
+                        </TableRow>
+                    </TableHead>
                     <TableBody>
                         {instances?.map((instance) => (
                             <TableRow key={instance._id}>
-                                <TableCell>{listItemTextTitle(instance)}</TableCell>
+                                {columns.map((column) => (
+                                    <TableCell key={column.label}>
+                                        {typeof column.key === "function" ? column.key(instance) : instance[column.key]}
+                                    </TableCell>
+                                ))}
                                 {isAdminPage && (
                                     <>
                                         <TableCell style={{ width: 40 }} align="right">
