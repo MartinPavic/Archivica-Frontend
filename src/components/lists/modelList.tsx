@@ -59,7 +59,7 @@ export const ModelList = <T extends Model>({
                             <TableRow key={instance._id}>
                                 {columns.map((column) => (
                                     <TableCell key={column.label}>
-                                        {typeof column.key === "function" ? column.key(instance) : instance[column.key]}
+                                        {typeof column.key === "function" ? column.key(instance) : (instance as any)[column.key]}
                                     </TableCell>
                                 ))}
                                 {isAdminPage && (

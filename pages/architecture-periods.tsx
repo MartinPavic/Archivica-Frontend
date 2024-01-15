@@ -21,7 +21,6 @@ const ArchitecturePeriods: NextPage<ArchitecturePeriodsProps> = ({ isAdminPage }
     const [page, setPage] = useState<number>(1);
     const [sort, setSort] = useState<Sort>({ property: "name", operator: "asc" });
     const [limit, setLimit] = useState<number>(10);
-    // const columns = ["Name", "Synonms", "Start", "End"]
     const columns: Column[] = [
         { label: "Name", key: (instance) => listItemTextTitle(instance) },
         { label: "Synonms", key: "synonms"},
