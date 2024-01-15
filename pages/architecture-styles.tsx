@@ -23,10 +23,10 @@ const ArchitectureStyles: NextPage<ArchitectureStylesProps> = ({ isAdminPage }) 
     const [limit, setLimit] = useState<number>(10);
     const columns: Column[] = [
         { label: "Name", key: (instance) => listItemTextTitle(instance) },
-        { label: "Synonms", key: "synonms"},
+        { label: "Synonms", key: "synonms" },
         { label: "Start", key: (instance) => startYearWithEra(instance) },
-        { label: "End", key: (instance) => endYearWithEra(instance) }
-      ];
+        { label: "End", key: (instance) => endYearWithEra(instance) },
+    ];
     const [architectureStyles, setArchitectureStyles] = useState<ArchitectureStyle[]>([]);
     const getArchitectureStylesRequest = useAuthenticatedRequest({ request: apiService.getArchitectureStyles });
     const deleteArchitectureStylesRequest = useAuthenticatedRequest({ request: apiService.deleteArchitectureStyles });
@@ -67,8 +67,10 @@ const ArchitectureStyles: NextPage<ArchitectureStylesProps> = ({ isAdminPage }) 
         ]);
     };
     const listItemTextTitle = (architectureStyle: ArchitectureStyle) => architectureStyle.name;
-    const startYearWithEra = (architectureStyle: ArchitectureStyle) => `${architectureStyle?.start?.year} ${architectureStyle?.start?.unit}`;
-    const endYearWithEra = (architectureStyle: ArchitectureStyle) => `${architectureStyle?.end?.year} ${architectureStyle?.end?.unit}`;
+    const startYearWithEra = (architectureStyle: ArchitectureStyle) =>
+        `${architectureStyle?.start?.year} ${architectureStyle?.start?.unit}`;
+    const endYearWithEra = (architectureStyle: ArchitectureStyle) =>
+        `${architectureStyle?.end?.year} ${architectureStyle?.end?.unit}`;
 
     const renderArchitectUpdateForm: RenderInstanceUpdateForm<ArchitectureStyle> = (
         open,
@@ -96,31 +98,15 @@ const ArchitectureStyles: NextPage<ArchitectureStylesProps> = ({ isAdminPage }) 
         >
             <Container className="no-scrollbar relative overflow-y-scroll">
                 {getArchitectureStylesRequest.loading && <CircularProgress />}
-                <SnackbarWrapper
-                    show={
-                        !!getArchitectureStylesRequest.error ||
-                        !!deleteArchitectureStylesRequest.error ||
-                        !!createArchitectureStylesRequest.error ||
-                        !!updateArchitectureStylesRequest.error
-                    }
-                    success={false}
-                    message={
-                        getArchitectureStylesRequest.error ??
-                        deleteArchitectureStylesRequest.error ??
-                        createArchitectureStylesRequest.error ??
-                        updateArchitectureStylesRequest.error
-                    }
-                >
-                    <ModelList<ArchitectureStyle>
-                        instances={architectureStyles}
-                        updateInstance={updateArchitectureStyle}
-                        deleteInstance={deleteArchitectureStyle}
-                        listItemTextTitle={listItemTextTitle}
-                        renderInstanceUpdateForm={renderArchitectUpdateForm}
-                        isAdminPage={isAdminPage}
-                        columns={columns}
-                    />
-                </SnackbarWrapper>
+                <ModelList<ArchitectureStyle>
+                    instances={architectureStyles}
+                    updateInstance={updateArchitectureStyle}
+                    deleteInstance={deleteArchitectureStyle}
+                    listItemTextTitle={listItemTextTitle}
+                    renderInstanceUpdateForm={renderArchitectUpdateForm}
+                    isAdminPage={isAdminPage}
+                    columns={columns}
+                />
             </Container>
             {isAdminPage && (
                 <Fab
