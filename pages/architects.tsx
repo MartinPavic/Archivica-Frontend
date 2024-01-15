@@ -35,7 +35,7 @@ const Architects: NextPage<ArchitectsProps> = ({ isAdminPage }) => {
     const updateArchitectRequest = useAuthenticatedRequest({ request: apiService.putArchitect });
     const createArchitectRequest = useAuthenticatedRequest({ request: apiService.postArchitect });
     const countries: Country[] = useCountries()
-    const findCountry = (instance: Architect) => countries?.find(country => country.id === instance.countryId)
+    const findCountry = (instance: Architect) => countries?.find(country => String(country.id).toString() === instance.countryId)
 
     useEffect(() => {
         const getArchitects = async () => {
