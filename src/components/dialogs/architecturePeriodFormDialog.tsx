@@ -84,11 +84,10 @@ const ArchitecturePeriodFormDialog = ({
                     <Grid item xs={12}>
                         <Button onClick={() => append("")}>Add synonym</Button>
                     </Grid>
-                    <Grid item xs={12} sm={6}>
+                    <Grid item>
                         <TextField
                             required
                             type="number"
-                            fullWidth
                             id="start"
                             label="Start"
                             defaultValue={architecturePeriod?.start.year}
@@ -102,11 +101,10 @@ const ArchitecturePeriodFormDialog = ({
                         />
                         <TextField
                             required
-                            fullWidth
                             select
                             id="startUnit"
-                            label="Start Unit"
-                            defaultValue={architecturePeriod?.start.unit}
+                            label=""
+                            defaultValue={architecturePeriod?.start.unit || "AD"}
                             error={touchedFields.start && !!errors.start}
                             helperText={errors.start?.message}
                             {...register("start.unit", {
@@ -117,9 +115,8 @@ const ArchitecturePeriodFormDialog = ({
                             <MenuItem value="BC">BC</MenuItem>
                         </TextField>
                     </Grid>
-                    <Grid item xs={12} sm={6}>
+                    <Grid item>
                         <TextField
-                            fullWidth
                             type="number"
                             id="end"
                             label="End"
@@ -133,11 +130,10 @@ const ArchitecturePeriodFormDialog = ({
                         />
                         <TextField
                             required
-                            fullWidth
                             select
                             id="endUnit"
-                            label="End Unit"
-                            defaultValue={architecturePeriod?.end.unit}
+                            label=""
+                            defaultValue={architecturePeriod?.end.unit || "AD"}
                             error={touchedFields.end && !!errors.end}
                             helperText={errors.end?.message}
                             {...register("end.unit", {

@@ -1,4 +1,4 @@
-import { Box, CircularProgress, Container, Fab, ListItemText } from "@mui/material";
+import { Box, CircularProgress, Container, Fab } from "@mui/material";
 import { NextPage } from "next";
 import background from "../assets/images/buildings.jpg";
 import { Close, Add } from "@mui/icons-material";
@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import { useAuthenticatedRequest } from "../src/hooks/useRequest";
 import apiService from "../src/services/api";
 import { Filter, Sort } from "../src/models/filterPageSort";
-import { SnackbarWrapper } from "../src/components/snackbarWrapper";
 import { Architect } from "../src/models/architect";
 import ArchitectFormDialog from "../src/components/dialogs/architectFormDialog";
 import { Column, ModelList, RenderInstanceUpdateForm } from "../src/components/lists/modelList";
@@ -28,14 +27,15 @@ const Architects: NextPage<ArchitectsProps> = ({ isAdminPage }) => {
         { label: "Name", key: (instance) => listItemTextTitle(instance) },
         { label: "Country", key: (instance) => findCountry(instance)?.name },
         { label: "Year Born", key: "yearBorn" },
-        { label: "Year Died", key: "yearDied" }
-      ];
+        { label: "Year Died", key: "yearDied" },
+    ];
     const getArchitectsRequest = useAuthenticatedRequest({ request: apiService.getArchitects });
     const deleteArchitectRequest = useAuthenticatedRequest({ request: apiService.deleteArchitect });
     const updateArchitectRequest = useAuthenticatedRequest({ request: apiService.putArchitect });
     const createArchitectRequest = useAuthenticatedRequest({ request: apiService.postArchitect });
-    const countries: Country[] = useCountries()
-    const findCountry = (instance: Architect) => countries?.find(country => String(country.id).toString() === instance.countryId)
+    const countries: Country[] = useCountries();
+    const findCountry = (instance: Architect) =>
+        countries?.find((country) => country.id.toString() === instance.countryId);
 
     useEffect(() => {
         const getArchitects = async () => {
@@ -84,31 +84,15 @@ const Architects: NextPage<ArchitectsProps> = ({ isAdminPage }) => {
         >
             <Container className="no-scrollbar relative overflow-y-scroll">
                 {getArchitectsRequest.loading && <CircularProgress />}
-                <SnackbarWrapper
-                    show={
-                        !!getArchitectsRequest.error ||
-                        !!deleteArchitectRequest.error ||
-                        !!createArchitectRequest.error ||
-                        !!updateArchitectRequest.error
-                    }
-                    success={false}
-                    message={
-                        getArchitectsRequest.error ??
-                        deleteArchitectRequest.error ??
-                        createArchitectRequest.error ??
-                        updateArchitectRequest.error
-                    }
-                >
-                    <ModelList<Architect>
-                        instances={architects}
-                        updateInstance={updateArchitect}
-                        deleteInstance={deleteArchitect}
-                        listItemTextTitle={listItemTextTitle}
-                        renderInstanceUpdateForm={renderArchitectUpdateForm}
-                        isAdminPage={isAdminPage}
-                        columns={columns}
-                    />
-                </SnackbarWrapper>
+                <ModelList<Architect>
+                    instances={architects}
+                    updateInstance={updateArchitect}
+                    deleteInstance={deleteArchitect}
+                    listItemTextTitle={listItemTextTitle}
+                    renderInstanceUpdateForm={renderArchitectUpdateForm}
+                    isAdminPage={isAdminPage}
+                    columns={columns}
+                />
             </Container>
             {isAdminPage && (
                 <Fab
