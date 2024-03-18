@@ -26,6 +26,11 @@ npm install
 ```
 Before first step, run backend. 
 
+Make sure that .env.local file exists with this param setup:
+```sh
+NEXT_PUBLIC_API_URL=(backend url)
+```
+
 After that, run the development server:
 
 ```bash
