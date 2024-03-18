@@ -1,0 +1,14 @@
+.profileHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    
+    &_start {
+        display: flex;
+        align-items: center;
+    }
+
+    h2 {
+        margin-left: 20px;
+    }
+}
