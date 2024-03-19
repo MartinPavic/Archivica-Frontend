@@ -10,7 +10,12 @@ interface ArchitecturePeriodFormDialogProps {
     architecturePeriod?: ArchitecturePeriod;
 }
 
-const ArchitecturePeriodFormDialog = ({ open, setOpen, onSubmit, architecturePeriod }: ArchitecturePeriodFormDialogProps) => {
+const ArchitecturePeriodFormDialog = ({
+    open,
+    setOpen,
+    onSubmit,
+    architecturePeriod,
+}: ArchitecturePeriodFormDialogProps) => {
     const {
         control,
         register,
@@ -18,26 +23,28 @@ const ArchitecturePeriodFormDialog = ({ open, setOpen, onSubmit, architecturePer
         // Read the formState before render to subscribe the form state through the Proxy
         formState: { errors, isValid, touchedFields },
         reset,
-		setValue
+        setValue,
     } = useForm<ArchitecturePeriod>();
     const { fields, append, remove } = useFieldArray({
         control,
         name: "synonyms",
-	} as any);
+    } as any);
 
-	useEffect(() => {
-		architecturePeriod?.synonyms.forEach((synonym) => append(synonym))
-		if (architecturePeriod) setValue("_id", architecturePeriod._id);
-	}, [architecturePeriod?._id])
+    useEffect(() => {
+        architecturePeriod?.synonyms.forEach((synonym) => append(synonym));
+        if (architecturePeriod) setValue("_id", architecturePeriod._id);
+    }, [architecturePeriod?._id]);
 
     const handleClose = (event: any, reason: "backdropClick" | "escapeKeyDown" | "submitted") => {
-		setOpen(false);
-		reset();
+        setOpen(false);
+        reset();
     };
 
     return (
         <Dialog onClose={handleClose} open={open}>
-            <DialogTitle>{architecturePeriod ? `Update ${architecturePeriod.name}` : "Create an architecture period"}</DialogTitle>
+            <DialogTitle>
+                {architecturePeriod ? `Update ${architecturePeriod.name}` : "Create an architecture period"}
+            </DialogTitle>
             <form className="m-4" onSubmit={handleSubmit(onSubmit)}>
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
@@ -47,7 +54,7 @@ const ArchitecturePeriodFormDialog = ({ open, setOpen, onSubmit, architecturePer
                             id="name"
                             label="Name"
                             autoFocus
-                            value={architecturePeriod?.name}
+                            defaultValue={architecturePeriod?.name}
                             error={touchedFields.name && !!errors.name}
                             helperText={errors.name?.message}
                             {...register("name", {
@@ -70,78 +77,72 @@ const ArchitecturePeriodFormDialog = ({ open, setOpen, onSubmit, architecturePer
                                         minLength: 2,
                                     })}
                                 />
-								<Button onClick={() => remove(index)}>Delete</Button>
+                                <Button onClick={() => remove(index)}>Delete</Button>
                             </Grid>
                         );
                     })}
-					<Grid item xs={12}>
-						<Button onClick={() => append("")}>Add synonym</Button>
-					</Grid>
-                    <Grid item xs={12} sm={6}>
+                    <Grid item xs={12}>
+                        <Button onClick={() => append("")}>Add synonym</Button>
+                    </Grid>
+                    <Grid item>
                         <TextField
                             required
                             type="number"
-                            fullWidth
                             id="start"
                             label="Start"
-                            value={architecturePeriod?.start.year}
+                            defaultValue={architecturePeriod?.start.year}
                             error={touchedFields.start && !!errors.start}
                             helperText={errors.start?.message}
                             {...register("start.year", {
                                 required: "Start year is required",
                                 maxLength: 4,
-								min: 0
+                                min: 0,
                             })}
                         />
-						<TextField
+                        <TextField
                             required
-                            fullWidth
-							select
+                            select
                             id="startUnit"
-                            label="Start Unit"
-                            value={architecturePeriod?.start.unit}
+                            label=""
+                            defaultValue={architecturePeriod?.start.unit || "AD"}
                             error={touchedFields.start && !!errors.start}
                             helperText={errors.start?.message}
                             {...register("start.unit", {
                                 required: "Start unit is required",
                             })}
                         >
-							<MenuItem value="AD">AD</MenuItem>
-							<MenuItem value="BC">BC</MenuItem>
-						</TextField>
-
+                            <MenuItem value="AD">AD</MenuItem>
+                            <MenuItem value="BC">BC</MenuItem>
+                        </TextField>
                     </Grid>
-                    <Grid item xs={12} sm={6}>
+                    <Grid item>
                         <TextField
-                            fullWidth
                             type="number"
                             id="end"
                             label="End"
-                            value={architecturePeriod?.end.year}
+                            defaultValue={architecturePeriod?.end.year}
                             error={touchedFields.end && !!errors.end}
                             helperText={errors.end?.message}
                             {...register("end.year", {
                                 maxLength: 4,
-								min: 0
+                                min: 0,
                             })}
                         />
-						<TextField
+                        <TextField
                             required
-                            fullWidth
-							select
+                            select
                             id="endUnit"
-                            label="End Unit"
-                            value={architecturePeriod?.end.unit}
+                            label=""
+                            defaultValue={architecturePeriod?.end.unit || "AD"}
                             error={touchedFields.end && !!errors.end}
                             helperText={errors.end?.message}
                             {...register("end.unit", {
                                 required: "End unit is required",
                             })}
                         >
-							<MenuItem value="AD">AD</MenuItem>
-							<MenuItem value="BC">BC</MenuItem>
-						</TextField>
-
+                            <MenuItem value="AD">AD</MenuItem>
+                            <MenuItem value="BC">BC</MenuItem>
+                        </TextField>
                     </Grid>
                     <Grid item xs={12}>
                         <Button disabled={!isValid} variant="outlined" type="submit">

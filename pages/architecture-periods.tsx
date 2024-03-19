@@ -8,15 +8,25 @@ import apiService from "../src/services/api";
 import { Filter, Sort } from "../src/models/filterPageSort";
 import { SnackbarWrapper } from "../src/components/snackbarWrapper";
 import { ArchitecturePeriod } from "../src/models/architecturePeriod";
-import { ModelList, RenderInstanceUpdateForm } from "../src/components/lists/modelList";
+import { Column, ModelList, RenderInstanceUpdateForm } from "../src/components/lists/modelList";
 import ArchitecturePeriodFormDialog from "../src/components/dialogs/architecturePeriodFormDialog";
 
-const ArchitecturePeriods: NextPage = () => {
+interface ArchitecturePeriodsProps {
+    isAdminPage: boolean;
+}
+
+const ArchitecturePeriods: NextPage<ArchitecturePeriodsProps> = ({ isAdminPage }) => {
     const [open, setOpen] = useState(false);
     const [filters, setFilters] = useState<Filter[]>([]);
     const [page, setPage] = useState<number>(1);
     const [sort, setSort] = useState<Sort>({ property: "name", operator: "asc" });
     const [limit, setLimit] = useState<number>(10);
+    const columns: Column[] = [
+        { label: "Name", key: (instance) => listItemTextTitle(instance) },
+        { label: "Synonms", key: "synonms" },
+        { label: "Start", key: (instance) => startYearWithEra(instance) },
+        { label: "End", key: (instance) => endYearWithEra(instance) },
+    ];
     const [architecturePeriods, setArchitecturePeriods] = useState<ArchitecturePeriod[]>([]);
     const getArchitecturePeriodsRequest = useAuthenticatedRequest({ request: apiService.getArchitecturePeriods });
     const deleteArchitecturePeriodsRequest = useAuthenticatedRequest({ request: apiService.deleteArchitecturePeriods });
@@ -55,8 +65,13 @@ const ArchitecturePeriods: NextPage = () => {
             response,
             ...architecturePeriods.slice(index + 1),
         ]);
+        setOpen(false);
     };
     const listItemTextTitle = (architecturePeriod: ArchitecturePeriod) => architecturePeriod.name;
+    const startYearWithEra = (architecturePeriod: ArchitecturePeriod) =>
+        `${architecturePeriod.start.year} ${architecturePeriod.start.unit}`;
+    const endYearWithEra = (architecturePeriod: ArchitecturePeriod) =>
+        `${architecturePeriod?.end.year} ${architecturePeriod?.end.unit}`;
 
     const renderArchitectUpdateForm: RenderInstanceUpdateForm<ArchitecturePeriod> = (
         open,
@@ -76,43 +91,35 @@ const ArchitecturePeriods: NextPage = () => {
     return (
         <Box
             className="no-scrollbar w-full h-screen flex justify-center px-12"
-            sx={{ backgroundImage: `url(${background.src})`, minHeight: "400px", backdropFilter: "blur(4.7px)" }}
+            sx={
+                isAdminPage
+                    ? {}
+                    : { backgroundImage: `url(${background.src})`, minHeight: "400px", backdropFilter: "blur(4.7px)" }
+            }
         >
             <Container className="no-scrollbar relative overflow-y-scroll">
                 {getArchitecturePeriodsRequest.loading && <CircularProgress />}
-                <SnackbarWrapper
-                    show={
-                        !!getArchitecturePeriodsRequest.error ||
-                        !!deleteArchitecturePeriodsRequest.error ||
-                        !!createArchitecturePeriodsRequest.error ||
-                        !!updateArchitecturePeriodsRequest.error
-                    }
-                    success={false}
-                    message={
-                        getArchitecturePeriodsRequest.error ??
-                        deleteArchitecturePeriodsRequest.error ??
-                        createArchitecturePeriodsRequest.error ??
-                        updateArchitecturePeriodsRequest.error
-                    }
-                >
-                    <ModelList<ArchitecturePeriod>
-                        instances={architecturePeriods}
-                        updateInstance={updateArchitecturePeriod}
-                        deleteInstance={deleteArchitecturePeriod}
-                        listItemTextTitle={listItemTextTitle}
-                        renderInstanceUpdateForm={renderArchitectUpdateForm}
-                    />
-                </SnackbarWrapper>
+                <ModelList<ArchitecturePeriod>
+                    instances={architecturePeriods}
+                    updateInstance={updateArchitecturePeriod}
+                    deleteInstance={deleteArchitecturePeriod}
+                    listItemTextTitle={listItemTextTitle}
+                    renderInstanceUpdateForm={renderArchitectUpdateForm}
+                    isAdminPage={isAdminPage}
+                    columns={columns}
+                />
             </Container>
-            <Fab
-                className="fixed z-90 bottom-10 right-8 bg-blue-600 rounded-full drop-shadow-lg flex justify-center items-center text-white text-4xl"
-                color="primary"
-                aria-label="add"
-                sx={{ position: "fixed" }}
-                onClick={() => setOpen(!open)}
-            >
-                {open ? <Close /> : <Add />}
-            </Fab>
+            {isAdminPage && (
+                <Fab
+                    className="fixed z-90 bottom-10 right-8 bg-blue-600 rounded-full drop-shadow-lg flex justify-center items-center text-white text-4xl"
+                    color="primary"
+                    aria-label="add"
+                    sx={{ position: "fixed" }}
+                    onClick={() => setOpen(!open)}
+                >
+                    (open ? <Close /> : <Add />)
+                </Fab>
+            )}
 
             <ArchitecturePeriodFormDialog
                 open={open}

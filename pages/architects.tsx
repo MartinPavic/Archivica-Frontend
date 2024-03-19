@@ -1,4 +1,4 @@
-import { Box, CircularProgress, Container, Fab, ListItemText } from "@mui/material";
+import { Box, CircularProgress, Container, Fab } from "@mui/material";
 import { NextPage } from "next";
 import background from "../assets/images/buildings.jpg";
 import { Close, Add } from "@mui/icons-material";
@@ -6,22 +6,36 @@ import { useEffect, useState } from "react";
 import { useAuthenticatedRequest } from "../src/hooks/useRequest";
 import apiService from "../src/services/api";
 import { Filter, Sort } from "../src/models/filterPageSort";
-import { SnackbarWrapper } from "../src/components/snackbarWrapper";
 import { Architect } from "../src/models/architect";
 import ArchitectFormDialog from "../src/components/dialogs/architectFormDialog";
-import { ModelList, RenderInstanceUpdateForm } from "../src/components/lists/modelList";
+import { Column, ModelList, RenderInstanceUpdateForm } from "../src/components/lists/modelList";
+import { useCountries } from "../src/hooks/useCountries";
+import { Country } from "../src/models/country";
 
-const Architects: NextPage = () => {
+interface ArchitectsProps {
+    isAdminPage: boolean;
+}
+
+const Architects: NextPage<ArchitectsProps> = ({ isAdminPage }) => {
     const [open, setOpen] = useState(false);
     const [filters, setFilters] = useState<Filter[]>([]);
     const [page, setPage] = useState<number>(1);
     const [sort, setSort] = useState<Sort>({ property: "name", operator: "asc" });
     const [limit, setLimit] = useState<number>(10);
     const [architects, setArchitects] = useState<Architect[]>([]);
+    const columns: Column[] = [
+        { label: "Name", key: (instance) => listItemTextTitle(instance) },
+        { label: "Country", key: (instance) => findCountry(instance)?.name },
+        { label: "Year Born", key: "yearBorn" },
+        { label: "Year Died", key: "yearDied" },
+    ];
     const getArchitectsRequest = useAuthenticatedRequest({ request: apiService.getArchitects });
     const deleteArchitectRequest = useAuthenticatedRequest({ request: apiService.deleteArchitect });
     const updateArchitectRequest = useAuthenticatedRequest({ request: apiService.putArchitect });
     const createArchitectRequest = useAuthenticatedRequest({ request: apiService.postArchitect });
+    const countries: Country[] = useCountries();
+    const findCountry = (instance: Architect) =>
+        countries?.find((country) => country.id.toString() === instance.countryId);
 
     useEffect(() => {
         const getArchitects = async () => {
@@ -62,43 +76,35 @@ const Architects: NextPage = () => {
     return (
         <Box
             className="no-scrollbar w-full h-screen flex justify-center px-12"
-            sx={{ backgroundImage: `url(${background.src})`, minHeight: "400px", backdropFilter: "blur(4.7px)" }}
+            sx={
+                isAdminPage
+                    ? {}
+                    : { backgroundImage: `url(${background.src})`, minHeight: "400px", backdropFilter: "blur(4.7px)" }
+            }
         >
             <Container className="no-scrollbar relative overflow-y-scroll">
                 {getArchitectsRequest.loading && <CircularProgress />}
-                <SnackbarWrapper
-                    show={
-                        !!getArchitectsRequest.error ||
-                        !!deleteArchitectRequest.error ||
-                        !!createArchitectRequest.error ||
-                        !!updateArchitectRequest.error
-                    }
-                    success={false}
-                    message={
-                        getArchitectsRequest.error ??
-                        deleteArchitectRequest.error ??
-                        createArchitectRequest.error ??
-                        updateArchitectRequest.error
-                    }
-                >
-                    <ModelList<Architect>
-                        instances={architects}
-                        updateInstance={updateArchitect}
-                        deleteInstance={deleteArchitect}
-                        listItemTextTitle={listItemTextTitle}
-                        renderInstanceUpdateForm={renderArchitectUpdateForm}
-                    />
-                </SnackbarWrapper>
+                <ModelList<Architect>
+                    instances={architects}
+                    updateInstance={updateArchitect}
+                    deleteInstance={deleteArchitect}
+                    listItemTextTitle={listItemTextTitle}
+                    renderInstanceUpdateForm={renderArchitectUpdateForm}
+                    isAdminPage={isAdminPage}
+                    columns={columns}
+                />
             </Container>
-            <Fab
-                className="fixed z-90 bottom-10 right-8 bg-blue-600 rounded-full drop-shadow-lg flex justify-center items-center text-white text-4xl"
-                color="primary"
-                aria-label="add"
-                sx={{ position: "fixed" }}
-                onClick={() => setOpen(!open)}
-            >
-                {open ? <Close /> : <Add />}
-            </Fab>
+            {isAdminPage && (
+                <Fab
+                    className="fixed z-90 bottom-10 right-8 bg-blue-600 rounded-full drop-shadow-lg flex justify-center items-center text-white text-4xl"
+                    color="primary"
+                    aria-label="add"
+                    sx={{ position: "fixed" }}
+                    onClick={() => setOpen(!open)}
+                >
+                    {isAdminPage && (open ? <Close /> : <Add />)}
+                </Fab>
+            )}
             <ArchitectFormDialog open={open} setOpen={setOpen} onSubmit={createArchitect}></ArchitectFormDialog>
         </Box>
     );

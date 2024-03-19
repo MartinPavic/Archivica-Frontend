@@ -6,20 +6,23 @@ import React from "react";
 import { AppProps } from "next/app";
 import { AuthProvider } from "../src/contexts/useAuth";
 import Head from "next/head";
+import { SnackbarProvider } from "../src/contexts/useSnackbar";
 
 const App = ({ Component, pageProps }: AppProps) => {
     return (
         <AuthProvider>
-			<Head>
+            <Head>
                 <title>Arhivica</title>
                 <meta name="description" content="Archivica project" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <Header />
             <main>
-				<AuthGuard>
-                	<Component {...pageProps} />
-				</AuthGuard>
+                <AuthGuard>
+                    <SnackbarProvider>
+                        <Component {...pageProps} />
+                    </SnackbarProvider>
+                </AuthGuard>
                 {/* <ActionMenu /> */}
             </main>
         </AuthProvider>

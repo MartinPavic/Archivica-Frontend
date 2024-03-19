@@ -1,8 +1,8 @@
-import { List, ListItem, ListItemButton, ListItemText } from "@mui/material";
+import { ListItemButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { Dispatch, SetStateAction, useState } from "react";
 import { Model } from "../../models/model";
-import { Center } from "../center";
 import { Edit, Delete } from "@mui/icons-material";
+import { useCountries } from "../../hooks/useCountries";
 
 export type RenderInstanceUpdateForm<T> = (
     open: boolean,
@@ -11,6 +11,11 @@ export type RenderInstanceUpdateForm<T> = (
     instance: T
 ) => JSX.Element;
 
+export interface Column {
+    label: string;
+    key: string | ((instance: any) => React.ReactNode);
+}
+
 export interface ModelListProps<T extends Model> {
     instances: T[] | null;
     deleteInstance: (id: string) => Promise<void>;
@@ -18,6 +23,8 @@ export interface ModelListProps<T extends Model> {
 
     listItemTextTitle: (instance: T) => string;
     renderInstanceUpdateForm: RenderInstanceUpdateForm<T>;
+    isAdminPage: boolean;
+    columns: Column[];
 }
 
 export const ModelList = <T extends Model>({
@@ -26,45 +33,60 @@ export const ModelList = <T extends Model>({
     updateInstance,
     listItemTextTitle,
     renderInstanceUpdateForm,
+    isAdminPage,
+    columns,
 }: ModelListProps<T>): JSX.Element => {
     const [open, setOpen] = useState(false);
     const [selectedInstance, setSelectedInstance] = useState<T | undefined>(undefined);
     const openUpdateForm = (instance: T) => {
         setSelectedInstance(instance);
-		setOpen(true);
+        setOpen(true);
     };
+    const countries = useCountries();
     return (
         <>
-            <List className="relative top-16">
-                {instances?.map((instance) => (
-                    <Center key={instance._id} flexDirection="column">
-                        <ListItem
-                            className="justify-between"
-                            sx={{
-                                width: "300px",
-                                background: "rgba(255, 255, 255, 0.7)",
-                                boxShadow: "2px 3px 3px rgba(0, 0, 0, 0.1)",
-                                marginBottom: "8px",
-                            }}
-                        >
-                            <ListItemText primary={listItemTextTitle(instance)}></ListItemText>
-
-                            <div className="flex flex-row">
-                                <ListItemButton sx={{ padding: 0 }} onClick={() => openUpdateForm(instance)}>
-                                    {/* <ListItemIcon> */}
-                                    <Edit></Edit>
-                                    {/* </ListItemIcon> */}
-                                </ListItemButton>
-                                <ListItemButton sx={{ padding: 0 }} onClick={() => deleteInstance(instance._id)}>
-                                    {/* <ListItemIcon> */}
-                                    <Delete color="error"></Delete>
-                                    {/* </ListItemIcon> */}
-                                </ListItemButton>
-                            </div>
-                        </ListItem>
-                    </Center>
-                ))}
-            </List>
+            <TableContainer className="relative top-16" component={Paper}>
+                <Table size="small" aria-label="a dense table">
+                    <TableHead>
+                        <TableRow>
+                            {columns.map((column) => (
+                                <TableCell key={column.label}>{column.label}</TableCell>
+                            ))}
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {instances?.map((instance) => (
+                            <TableRow key={instance._id}>
+                                {columns.map((column) => (
+                                    <TableCell key={column.label}>
+                                        {typeof column.key === "function" ? column.key(instance) : (instance as any)[column.key]}
+                                    </TableCell>
+                                ))}
+                                {isAdminPage && (
+                                    <>
+                                        <TableCell style={{ width: 40 }} align="right">
+                                            <ListItemButton
+                                                sx={{ padding: 0 }}
+                                                onClick={() => openUpdateForm(instance)}
+                                            >
+                                                <Edit />
+                                            </ListItemButton>
+                                        </TableCell>
+                                        <TableCell style={{ width: 40 }} align="right">
+                                            <ListItemButton
+                                                sx={{ padding: 0 }}
+                                                onClick={() => deleteInstance(instance._id)}
+                                            >
+                                                <Delete color="error" />
+                                            </ListItemButton>
+                                        </TableCell>
+                                    </>
+                                )}
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
             {renderInstanceUpdateForm(open, setOpen, updateInstance, selectedInstance!)}
         </>
     );

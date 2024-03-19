@@ -8,15 +8,25 @@ import apiService from "../src/services/api";
 import { Filter, Sort } from "../src/models/filterPageSort";
 import { SnackbarWrapper } from "../src/components/snackbarWrapper";
 import { ArchitectureStyle } from "../src/models/architectureStyle";
-import { ModelList, RenderInstanceUpdateForm } from "../src/components/lists/modelList";
+import { Column, ModelList, RenderInstanceUpdateForm } from "../src/components/lists/modelList";
 import ArchitectureStyleFormDialog from "../src/components/dialogs/architectureStyleFormDialog";
 
-const ArchitectureStyles: NextPage = () => {
+interface ArchitectureStylesProps {
+    isAdminPage: boolean;
+}
+
+const ArchitectureStyles: NextPage<ArchitectureStylesProps> = ({ isAdminPage }) => {
     const [open, setOpen] = useState(false);
     const [filters, setFilters] = useState<Filter[]>([]);
     const [page, setPage] = useState<number>(1);
     const [sort, setSort] = useState<Sort>({ property: "name", operator: "asc" });
     const [limit, setLimit] = useState<number>(10);
+    const columns: Column[] = [
+        { label: "Name", key: (instance) => listItemTextTitle(instance) },
+        { label: "Synonms", key: "synonms" },
+        { label: "Start", key: (instance) => startYearWithEra(instance) },
+        { label: "End", key: (instance) => endYearWithEra(instance) },
+    ];
     const [architectureStyles, setArchitectureStyles] = useState<ArchitectureStyle[]>([]);
     const getArchitectureStylesRequest = useAuthenticatedRequest({ request: apiService.getArchitectureStyles });
     const deleteArchitectureStylesRequest = useAuthenticatedRequest({ request: apiService.deleteArchitectureStyles });
@@ -57,6 +67,10 @@ const ArchitectureStyles: NextPage = () => {
         ]);
     };
     const listItemTextTitle = (architectureStyle: ArchitectureStyle) => architectureStyle.name;
+    const startYearWithEra = (architectureStyle: ArchitectureStyle) =>
+        `${architectureStyle?.start?.year} ${architectureStyle?.start?.unit}`;
+    const endYearWithEra = (architectureStyle: ArchitectureStyle) =>
+        `${architectureStyle?.end?.year} ${architectureStyle?.end?.unit}`;
 
     const renderArchitectUpdateForm: RenderInstanceUpdateForm<ArchitectureStyle> = (
         open,
@@ -76,43 +90,35 @@ const ArchitectureStyles: NextPage = () => {
     return (
         <Box
             className="no-scrollbar w-full h-screen flex justify-center px-12"
-            sx={{ backgroundImage: `url(${background.src})`, minHeight: "400px", backdropFilter: "blur(4.7px)" }}
+            sx={
+                isAdminPage
+                    ? {}
+                    : { backgroundImage: `url(${background.src})`, minHeight: "400px", backdropFilter: "blur(4.7px)" }
+            }
         >
             <Container className="no-scrollbar relative overflow-y-scroll">
                 {getArchitectureStylesRequest.loading && <CircularProgress />}
-                <SnackbarWrapper
-                    show={
-                        !!getArchitectureStylesRequest.error ||
-                        !!deleteArchitectureStylesRequest.error ||
-                        !!createArchitectureStylesRequest.error ||
-                        !!updateArchitectureStylesRequest.error
-                    }
-                    success={false}
-                    message={
-                        getArchitectureStylesRequest.error ??
-                        deleteArchitectureStylesRequest.error ??
-                        createArchitectureStylesRequest.error ??
-                        updateArchitectureStylesRequest.error
-                    }
-                >
-                    <ModelList<ArchitectureStyle>
-                        instances={architectureStyles}
-                        updateInstance={updateArchitectureStyle}
-                        deleteInstance={deleteArchitectureStyle}
-                        listItemTextTitle={listItemTextTitle}
-                        renderInstanceUpdateForm={renderArchitectUpdateForm}
-                    />
-                </SnackbarWrapper>
+                <ModelList<ArchitectureStyle>
+                    instances={architectureStyles}
+                    updateInstance={updateArchitectureStyle}
+                    deleteInstance={deleteArchitectureStyle}
+                    listItemTextTitle={listItemTextTitle}
+                    renderInstanceUpdateForm={renderArchitectUpdateForm}
+                    isAdminPage={isAdminPage}
+                    columns={columns}
+                />
             </Container>
-            <Fab
-                className="fixed z-90 bottom-10 right-8 bg-blue-600 rounded-full drop-shadow-lg flex justify-center items-center text-white text-4xl"
-                color="primary"
-                aria-label="add"
-                sx={{ position: "fixed" }}
-                onClick={() => setOpen(!open)}
-            >
-                {open ? <Close /> : <Add />}
-            </Fab>
+            {isAdminPage && (
+                <Fab
+                    className="fixed z-90 bottom-10 right-8 bg-blue-600 rounded-full drop-shadow-lg flex justify-center items-center text-white text-4xl"
+                    color="primary"
+                    aria-label="add"
+                    sx={{ position: "fixed" }}
+                    onClick={() => setOpen(!open)}
+                >
+                    {open ? <Close /> : <Add />}
+                </Fab>
+            )}
 
             <ArchitectureStyleFormDialog
                 open={open}

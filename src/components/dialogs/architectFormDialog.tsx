@@ -28,7 +28,9 @@ const ArchitectFormDialog = ({ open, setOpen, onSubmit, architect }: ArchitectFo
 
     return (
         <Dialog onClose={handleClose} open={open}>
-            <DialogTitle>{architect ? `Update ${architect.firstName} ${architect.lastName}` : "Create an architect"}</DialogTitle>
+            <DialogTitle>
+                {architect ? `Update ${architect.firstName} ${architect.lastName}` : "Create an architect"}
+            </DialogTitle>
             <form className="m-4" onSubmit={handleSubmit(onSubmit)}>
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
@@ -38,7 +40,7 @@ const ArchitectFormDialog = ({ open, setOpen, onSubmit, architect }: ArchitectFo
                             id="firstName"
                             label="First Name"
                             autoFocus
-							value={architect?.firstName}
+                            defaultValue={architect?.firstName}
                             error={touchedFields.firstName && !!errors.firstName}
                             helperText={errors.firstName?.message}
                             {...register("firstName", {
@@ -53,7 +55,7 @@ const ArchitectFormDialog = ({ open, setOpen, onSubmit, architect }: ArchitectFo
                             fullWidth
                             id="lastName"
                             label="Last Name"
-							value={architect?.lastName}
+                            defaultValue={architect?.lastName}
                             error={touchedFields.lastName && !!errors.lastName}
                             helperText={errors.lastName?.message}
                             {...register("lastName", {
@@ -69,7 +71,7 @@ const ArchitectFormDialog = ({ open, setOpen, onSubmit, architect }: ArchitectFo
                             fullWidth
                             id="yearBorn"
                             label="Year born"
-							value={architect?.yearBorn}
+                            defaultValue={architect?.yearBorn}
                             error={touchedFields.yearBorn && !!errors.yearBorn}
                             helperText={errors.yearBorn?.message}
                             {...register("yearBorn", {
@@ -84,7 +86,7 @@ const ArchitectFormDialog = ({ open, setOpen, onSubmit, architect }: ArchitectFo
                             type="number"
                             id="yearDied"
                             label="Year died"
-							value={architect?.yearDied}
+                            defaultValue={architect?.yearDied}
                             error={touchedFields.yearDied && !!errors.yearDied}
                             helperText={errors.yearDied?.message}
                             {...register("yearDied", {
@@ -99,7 +101,7 @@ const ArchitectFormDialog = ({ open, setOpen, onSubmit, architect }: ArchitectFo
                             select
                             id="Country"
                             label="Country"
-							value={architect?.countryId}
+                            defaultValue={architect?.countryId}
                             error={touchedFields.countryId && !!errors.countryId}
                             helperText={errors.countryId?.message}
                             {...register("countryId", {
